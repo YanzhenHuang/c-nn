@@ -21,22 +21,13 @@ typedef struct {
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed);
 
 /**
- * @brief Acquire a row of a matrix.
+ * @brief Stack two matrices horizontally.
  * 
- * @param mat Mother matrix struct pointer.
- * @param i Row index
+ * @param mat_l Left matrix struct pointer.
+ * @param mat_r Right matrix struct pointer.
  * @return Matrix* 
  */
-Matrix* xmat_readrow(Matrix*mat, long long i);
-
-/**
- * @brief Acquire a column of a matrix.
- * 
- * @param mat Mother matrix struct pointer.
- * @param j Column index.
- * @return Matrix* 
- */
-Matrix* xmat_readcol(Matrix*mat, long long j);
+Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r);
 
 /**
  * @brief Calculate the inverse of a matrix.
@@ -53,6 +44,24 @@ Matrix* xmat_inv(Matrix*mat);
  * @return Matrix* 
  */
 double xmat_det(Matrix*mat);
+
+/**
+ * @brief Acquire a row of a matrix.
+ * 
+ * @param mat Mother matrix struct pointer.
+ * @param i Row index
+ * @return Matrix* 
+ */
+Matrix* xmat_readrow(Matrix*mat, long long i);
+
+/**
+ * @brief Acquire a column of a matrix.
+ * 
+ * @param mat Mother matrix struct pointer.
+ * @param j Column index.
+ * @return Matrix* 
+ */
+Matrix* xmat_readcol(Matrix*mat, long long j);
 
 /**
  * @brief Solve for matrix equation Ax=b.

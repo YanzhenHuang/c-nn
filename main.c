@@ -15,8 +15,15 @@
 
 int main(){
     printf("===== Basic Matrix Operations ===\n");
-    Matrix* L = mat_create(2,3, (double[]){1,2,3,4,5,6});
-    Matrix* R = mat_create(3,2, (double[]){7,8,9,10,11,12});
+    Matrix* L = mat_create(2,3, (double[]){
+        1, 2, 3, 
+        4, 5, 6
+    });
+    Matrix* R = mat_create(3,2, (double[]){
+        7, 8, 
+        9, 10,
+        11, 12
+    });
     Matrix* Mul = mat_multmat(L, R);
     Matrix* RT = mat_transpose(R);
     Matrix* Add = mat_addmat(L, RT);
@@ -35,11 +42,19 @@ int main(){
 
     printf("===== Basic Matrix Equation Solving ===\n");
     printf("Solving Ax=b. Where:\n A:\n");
-    Matrix* A = mat_create(3,3, (double[]){3, 2, 1, -1, -3, -1, 1, -2, -2});
+    Matrix* A = mat_create(3,3, (double[]){
+        3, 2, 1, 
+        -1, -3, -1, 
+        1, -2, -2
+    });
     mat_print(A);
 
     printf("b:\n");
-    Matrix* b = mat_create(3,1, (double[]){-7, 5, 4});
+    Matrix* b = mat_create(3,1, (double[]){
+        -7, 
+        5, 
+        4
+    });
     mat_print(b);
 
     printf("Solved that x:\n");
