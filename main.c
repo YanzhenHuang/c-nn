@@ -14,7 +14,7 @@
 # include "xlinalg.h"
 
 int main(){
-    printf("===== Basic Matrix Operations ===\n");
+    printf("===== Basic Matrix Operations =====\n");
     Matrix* L = mat_create(2,3, (double[]){
         1, 2, 3, 
         4, 5, 6
@@ -40,7 +40,7 @@ int main(){
     printf("Added Matrix (A=L+RT):\n");
     mat_print(Add);
 
-    printf("===== Basic Matrix Equation Solving ===\n");
+    printf("===== Basic Matrix Equation Solving =====\n");
     printf("Solving Ax=b. Where:\n A:\n");
     Matrix* A = mat_create(3,3, (double[]){
         3, 2, 1, 
@@ -61,7 +61,7 @@ int main(){
     Matrix* x = xmat_solve(A, b);
     mat_print(x);
 
-    printf("===== Matrix Determinant Calculation ===\n");
+    printf("===== Matrix Determinant Calculation =====\n");
 
     Matrix* C = mat_create(5, 5, (double[]){
         4, 0, -7, 3, -5,
@@ -76,7 +76,21 @@ int main(){
 
     double detC = xmat_det(C);
     printf("Calculated Determinant: %f\n", detC);
-    printf("Matrix acquired from: https://www.youtube.com/watch?v=crCsJy1lKXI");
+    printf("Matrix acquired from: https://www.youtube.com/watch?v=crCsJy1lKXI\n\n");
 
+    printf("===== Matrix Inverse Calculation =====\n");
+
+    Matrix* D = mat_create(2, 2, (double[]){
+        1, 2,
+        3, 4
+    });
+
+    printf("Matrix D (%lld x %lld):\n", D->row, D->col);
+    mat_print(D);
+
+    Matrix* invD = xmat_inv(D);
+
+    printf("Calculated Inverse:\n");
+    mat_print(invD);
     return 0;
 }

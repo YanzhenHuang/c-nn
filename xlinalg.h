@@ -9,6 +9,16 @@ typedef struct {
 } Optional;
 
 /**
+ * @brief Generate a diagonal matrix.
+ * 
+ * @param row Row size of matrix.
+ * @param col Column size of matrix.
+ * @param val Value of the diagonal.
+ * @return Matrix* 
+ */
+Matrix* xmat_diag(long long row, long long col, double val);
+
+/**
  * @brief Acquire a sub-matrix from a mother matrix.
  * 
  * @param mat Mother matrix struct pointer.
@@ -28,14 +38,6 @@ Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st,
  * @return Matrix* 
  */
 Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r);
-
-/**
- * @brief Calculate the inverse of a matrix.
- * 
- * @param mat Matrix struct pointer.
- * @return Matrix* 
- */
-Matrix* xmat_inv(Matrix*mat);
 
 /**
  * @brief Calculate the determinant of a matrix.
@@ -71,3 +73,11 @@ Matrix* xmat_readcol(Matrix*mat, long long j);
  * @return Matrix* 
  */
 Matrix* xmat_solve(Matrix* A, Matrix* b);
+
+/**
+ * @brief Calculate the inverse of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return Matrix* 
+ */
+Matrix* xmat_inv(Matrix*mat);

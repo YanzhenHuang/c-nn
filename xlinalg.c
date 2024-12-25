@@ -14,9 +14,25 @@
 #include <math.h>
 #include "xlinalg.h"
 
+Matrix* xmat_diag(long long row, long long col, double val){
+    double* empty_data = malloc(row * col * sizeof(double));
+    Matrix* diag_mat = mat_create(row, col, empty_data);
+
+    for(long long i=0; i < row; i++){
+        for(long long j=0; j < col; j++){
+            if (i == j){
+                diag_mat = mat_write(diag_mat, i, j, val);
+            }
+        }
+    }
+
+    return diag_mat;
+}
+
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){
     if (i_st > i_ed || j_st > j_ed){
-        printf("Acquire sub-matrix failed: Invalid requirement. Starting point shoud always start earlier than ending point.");
+        printf("Acquire sub-matrix failed: Invalid requirement."
+                "Starting point shoud always start earlier than ending point.");
         exit(1);
     }
     if (i_st < 0 || i_ed-1 >= mat->row || j_st < 0 || j_ed-1 >= mat->col){
@@ -65,15 +81,6 @@ Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r){
 
     return hstack;
 }
-
-// TODO
-// Matrix* xmat_inv(Matrix*mat){
-//     if(mat->row != mat->col){
-//         printf("Inverse matrix failed: Matrix is not square.");
-//         exit(1);
-//     }
-//
-// }
 
 double xmat_det(Matrix*mat){
     if(mat->row != mat->col){
@@ -162,16 +169,7 @@ Matrix* xmat_solve(Matrix* A, Matrix* b){
     }
 
     // Construct hybrid matrix.
-    double* hybrid_mat_data = malloc(A->row * (A->col+1) * sizeof(double));
-    for (long long i=0; i < A->row; i++){
-        // Each row 
-        for (long long j=0; j < A->col; j++){
-            hybrid_mat_data[i*(A->col+1)+j] = mat_read(A, i, j);
-        }
-        hybrid_mat_data[i*(A->col+1)+A->col] = mat_read(b, i, 0);
-    }
-
-    Matrix* hybrid_mat = mat_create(A->row, A->col+1, hybrid_mat_data);
+    Matrix* hybrid_mat = xmat_hstack(A, b);
 
     // Down: Forward Elimination
     for(long long i=0; i < hybrid_mat->row; i++){
@@ -231,7 +229,19 @@ Matrix* xmat_solve(Matrix* A, Matrix* b){
         }
     }
 
-    Matrix* x = xmat_readcol(hybrid_mat, -1);
+    // Matrix* x = xmat_readcol(hybrid_mat, -1);
+
+    Matrix* x = xmat_submat(hybrid_mat, 0, hybrid_mat->row, hybrid_mat->col - b->col, hybrid_mat->col);
 
     return x;
+}
+
+Matrix* xmat_inv(Matrix*mat){
+    if(mat->row != mat->col){
+        printf("Inverse matrix failed: Matrix is not square.");
+        exit(1);
+    }
+
+    Matrix* identity = xmat_diag(mat->row, mat->col, 1);
+    return xmat_solve(mat, identity);
 }
