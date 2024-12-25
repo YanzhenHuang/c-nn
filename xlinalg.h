@@ -39,6 +39,22 @@ Matrix* xmat_readrow(Matrix*mat, long long i);
 Matrix* xmat_readcol(Matrix*mat, long long j);
 
 /**
+ * @brief Calculate the inverse of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return Matrix* 
+ */
+Matrix* xmat_inv(Matrix*mat);
+
+/**
+ * @brief Calculate the determinant of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return Matrix* 
+ */
+double xmat_det(Matrix*mat);
+
+/**
  * @brief Solve for matrix equation Ax=b.
  * 
  * @param A A matrix

@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "linalg.h"
+#include "xlinalg.h"
 
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){
     if (i_st > i_ed || j_st > j_ed){
@@ -35,6 +35,87 @@ Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st,
     }
 
     return submat;
+}
+
+Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r){
+    if (mat_l->row != mat_r->row){
+        printf("Hstack failed: Invalid matrix size. mal_l: %lld x %lld, mat_r: %lld x %lld.",
+                mat_l->row, mat_l->col, mat_r->row, mat_r->col);
+        exit(1);
+    }
+
+    double* empty_data = malloc((mat_l->row) * (mat_l->col + mat_r->col) * sizeof(double));
+    Matrix* hstack = mat_create(mat_l->row, mat_l->col + mat_r->col, empty_data);
+
+    // Copy mat_l
+    for (long long i = 0; i < mat_l->row; i++) {
+        for (long long j = 0; j < mat_l->col; j++) {
+            double this_val = mat_read(mat_l, i, j);
+            mat_write(hstack, i, j, this_val);
+        }
+    }
+
+    // Copy mat_r
+    for (long long i = 0; i < mat_r->row; i++) {
+        for (long long j = 0; j < mat_r->col; j++) {
+            double this_val = mat_read(mat_r, i, j);
+            mat_write(hstack, i, j + mat_l->col, this_val);
+        }
+    }
+
+    return hstack;
+}
+
+// TODO
+// Matrix* xmat_inv(Matrix*mat){
+//     if(mat->row != mat->col){
+//         printf("Inverse matrix failed: Matrix is not square.");
+//         exit(1);
+//     }
+//
+// }
+
+double xmat_det(Matrix*mat){
+    if(mat->row != mat->col){
+        printf("Calculate determinant failed: Calculate matrix determinant failed: Matrix is not square.");
+        exit(1);
+    }
+
+    // Recursive method
+    if(mat->row == 2){
+        // a*d-b*c
+        return mat_read(mat, 0, 0) * mat_read(mat, 1, 1) - mat_read(mat, 0, 1) * mat_read(mat, 1, 0);
+    }
+
+    double det_val = 0.0;
+    int sign = 1;
+
+    // Otherwise, traverse the first row
+    for(long long j=0; j < mat->col; j++){
+        double anchor = mat_read(mat, 0, j);
+        
+        Matrix* sub_matrix = (Matrix*) malloc(sizeof(Matrix));
+
+        // Sub-matrix
+        if (j==0){
+            sub_matrix = xmat_submat(mat, 1, mat->row, 1, mat->col);
+        }else if(j == mat->col-1){
+            sub_matrix = xmat_submat(mat, 1, mat->row, 0, mat->col-1);
+        }else{
+            Matrix* submat_l = xmat_submat(mat, 1, mat->row, 0, j);
+            Matrix* submat_r = xmat_submat(mat, 1, mat->row, j+1, mat->col);
+            sub_matrix = xmat_hstack(submat_l, submat_r);
+            free(submat_l);
+            free(submat_r);
+        }
+        
+        // Accumulate
+        double increment = anchor * sign * xmat_det(sub_matrix);
+        sign *= -1;
+        det_val += increment;
+    }
+
+    return det_val;
 }
 
 Matrix* xmat_readrow(Matrix*mat, long long i){

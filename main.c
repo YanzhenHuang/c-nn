@@ -14,7 +14,6 @@
 # include "xlinalg.h"
 
 int main(){
-
     printf("===== Basic Matrix Operations ===\n");
     Matrix* L = mat_create(2,3, (double[]){1,2,3,4,5,6});
     Matrix* R = mat_create(3,2, (double[]){7,8,9,10,11,12});
@@ -46,6 +45,23 @@ int main(){
     printf("Solved that x:\n");
     Matrix* x = xmat_solve(A, b);
     mat_print(x);
+
+    printf("===== Matrix Determinant Calculation ===\n");
+
+    Matrix* C = mat_create(5, 5, (double[]){
+        4, 0, -7, 3, -5,
+        0, 0, 2, 0, 0,
+        7, 3, -6, 4, -8,
+        5, 0, 5, 2, -3,
+        0, 0, 9, -1, 2
+    });
+
+    printf("Matrix C (%lld x %lld):\n", C->row, C->col);
+    mat_print(C);
+
+    double detC = xmat_det(C);
+    printf("Calculated Determinant: %f\n", detC);
+    printf("Matrix acquired from: https://www.youtube.com/watch?v=crCsJy1lKXI");
 
     return 0;
 }
