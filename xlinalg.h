@@ -19,6 +19,15 @@ typedef struct {
 Matrix* xmat_diag(long long row, long long col, double val);
 
 /**
+ * @brief Generate a random matrix.
+ * 
+ * @param row Row size of matrix.
+ * @param col Column size of matrix.
+ * @return Matrix* 
+ */
+Matrix* xmat_rand(long long row, long long col);
+
+/**
  * @brief Acquire a sub-matrix from a mother matrix.
  * 
  * @param mat Mother matrix struct pointer.

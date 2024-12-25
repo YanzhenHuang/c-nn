@@ -30,6 +30,21 @@ Matrix* xmat_diag(long long row, long long col, double val){
     return diag_mat;
 }
 
+Matrix* xmat_rand(long long row, long long col){
+    srand((unsigned int)time(NULL));
+
+    double* empty_data = malloc(row * col * sizeof(double));
+    Matrix* rand_mat = mat_create(row, col, empty_data);
+    
+    for(long long i=0; i < row; i++){
+        for(long long j=0; j < col; j++){
+            double val = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+            rand_mat = mat_write(rand_mat, i, j, val);
+        }
+    }
+
+}
+
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){
     if (i_st > i_ed || j_st > j_ed){
         printf("Acquire sub-matrix failed: Invalid requirement."
