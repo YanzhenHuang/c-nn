@@ -200,7 +200,8 @@ Matrix* xmat_solve(Matrix* A, Matrix* b){
         // Check vor zero-pivot.
         double pivot = mat_read(hybrid_mat, i, i);
         if (pivot == 0){
-            printf("Solve equation failed: Pivot element is zero at row %lld during backward substitution.", i);
+            printf("Solve equation failed: Pivot element is zero at"
+                    " row %lld during backward substitution.", i);
             exit(1);
         }
 
