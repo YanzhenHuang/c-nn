@@ -1,3 +1,14 @@
+/**
+ * @file linalg.c
+ * @author Huang Yanzhen (yanzhenhuangwork@gmail.com)
+ * @brief Basic functions for linear algebra calculations.
+ * @version 0.1
+ * @date 2024-12-25
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <math.h>
@@ -8,8 +19,6 @@ Matrix *mat_create(long long row, long long col, double *data){
         printf("Invalid matrix size\n");
         exit(1);
     }
-
-    double last_ele = data[row * col - 1];      // If the data is insufficient an auto hault will happen.
 
     Matrix *matrix = (Matrix *) malloc(sizeof(Matrix));
     matrix->row = row;
