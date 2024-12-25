@@ -11,10 +11,11 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <time.h>
 # include "xlinalg.h"
 
-int main(){
-    printf("===== Basic Matrix Operations =====\n");
+int all(){
+        printf("===== Basic Matrix Operations =====\n");
     Matrix* L = mat_create(2,3, (double[]){
         1, 2, 3, 
         4, 5, 6
@@ -143,5 +144,10 @@ int main(){
     bool identify_Norm = xmat_isOrth(Norm);
     printf("Identify as: %d\n", identify_Norm);
 
+    return 0;
+}
+
+int main(){
+    all();
     return 0;
 }
