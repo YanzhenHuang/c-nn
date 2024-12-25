@@ -81,3 +81,36 @@ Matrix* xmat_solve(Matrix* A, Matrix* b);
  * @return Matrix* 
  */
 Matrix* xmat_inv(Matrix*mat);
+
+/**
+ * @brief Identify if two matrices are equal.
+ * 
+ * @param mat_1 Matrix struct pointer of the first matrix.
+ * @param mat_2 Matrix struct pointer of the second matrix.
+ * @return bool
+ */
+bool xmat_isEqual(Matrix* mat_1, Matrix* mat_2);
+
+/**
+ * @brief Identify if a matrix is a square matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return bool 
+ */
+bool xmat_isSquare(Matrix* mat);
+
+/**
+ * @brief Identify if a matrix is symmetric.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return bool
+ */
+bool xmat_isSymm(Matrix* mat);
+
+/**
+ * @brief Identify if a matrix is orthogonal.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return bool
+ */
+bool xmat_isOrth(Matrix* mat);

@@ -92,5 +92,56 @@ int main(){
 
     printf("Calculated Inverse:\n");
     mat_print(invD);
+
+    printf("===== Simple Matrix Properties =====\n");
+
+    Matrix* Symm = mat_create(3, 3, (double[]){
+        1,2,3,
+        2,5,4,
+        3,4,6
+    });
+
+    Matrix* Asym = mat_create(3, 3, (double[]){
+        1,2,3,
+        7,5,4,
+        3,4,6
+    });
+
+    Matrix* Orth = mat_create(3, 3, (double[]){
+        0, -1, 0,
+        1, 0, 0,
+        0, 0, -1
+    });
+
+    Matrix* Norm = mat_create(3, 3, (double[]){
+        1, -1, 0,
+        1, 0, 0,
+        0, 0, -1
+    });
+
+    printf("Symmetric Matrix (%lld x %lld):\n", Symm->row, Symm->col);
+    mat_print(Symm);
+
+    bool identify_Symm = xmat_isSymm(Symm);
+    printf("Identify as: %d\n", identify_Symm);
+
+    printf("Asymmetric Matrix (%lld x %lld):\n", Asym->row, Asym->col);
+    mat_print(Asym);
+
+    bool identify_Asym = xmat_isSymm(Asym);
+    printf("Identify as: %d\n", identify_Asym);
+
+    printf("Orthogonal Matrix (%lld x %lld):\n", Orth->row, Orth->col);
+    mat_print(Orth);
+
+    bool identify_Orth = xmat_isOrth(Orth);
+    printf("Identify as: %d\n", identify_Orth);
+
+    printf("Un-orthogonal Matrix (%lld x %lld):\n", Norm->row, Norm->col);
+    mat_print(Norm);
+
+    bool identify_Norm = xmat_isOrth(Norm);
+    printf("Identify as: %d\n", identify_Norm);
+
     return 0;
 }

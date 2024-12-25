@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "xlinalg.h"
 
@@ -245,4 +246,30 @@ Matrix* xmat_inv(Matrix*mat){
 
     Matrix* identity = xmat_diag(mat->row, mat->col, 1);
     return xmat_solve(mat, identity);
+}
+
+bool xmat_isEqual(Matrix* mat_1, Matrix* mat_2){
+    if (mat_1->row != mat_2->row ||
+        mat_1->col != mat_2->col
+    ){
+        return false;
+    }
+
+    return memcmp(mat_1->data, mat_2->data, mat_1->row * mat_1->col * sizeof(double)) == 0;
+}
+
+bool xmat_isSquare(Matrix* mat){
+    return mat->row == mat->col;
+}
+
+bool xmat_isSymm(Matrix* mat){
+    if (!xmat_isSquare(mat)) return false;
+    return xmat_isEqual(mat, mat_transpose(mat));
+}
+
+bool xmat_isOrth(Matrix* mat){
+    Matrix* mat_T = mat_transpose(mat);
+    Matrix* eye = xmat_diag(mat->row, mat->col, 1);
+
+    return xmat_isEqual(mat_multmat(mat, mat_T), eye);
 }

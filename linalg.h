@@ -84,10 +84,8 @@ Matrix* mat_addmat(Matrix* mat_1, Matrix* mat_2);
 /**
  * @brief Matrix multiplication.
  * 
- * @param mat_l Left matrix;
- * @param mat_r Right matrix;
+ * @param mat_l Left matrix.
+ * @param mat_r Right matrix.
  * @return Matrix* 
  */
 Matrix* mat_multmat(Matrix* mat_l, Matrix* mat_r);
-
-
