@@ -5,10 +5,10 @@ Compile:
 
 Windows:
 ```bash
-gcc -o ./exec_win/main main.c linalg.c -lm
+c-nn % gcc -o ./exec_win/main main.c linalg.c xlinalg.c -lm
 ```
 
 Mac:
 ```bash
-gcc -o ./exec_macos/main main.c linalg.c -lm
+c-nn % gcc -o ./exec_macos/main main.c linalg.c xlinalg.c -lm
 ```

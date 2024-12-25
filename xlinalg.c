@@ -1,8 +1,18 @@
+/**
+ * @file xlinalg.c
+ * @author Huang Yanzhen (yanzhenhuangwork@gmail.com)
+ * @brief Advanced functions for linear algebra calculations.
+ * @version 0.1
+ * @date 2024-12-25
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "linalg.h"
-
 
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){
     if (i_st > i_ed || j_st > j_ed){
@@ -130,7 +140,7 @@ Matrix* xmat_solve(Matrix* A, Matrix* b){
         }
     }
 
-    // Elimination
+    // Pivot Elimination: Divide end values by its pivot.
     for (long long i=0; i < hybrid_mat->row; i++){
         double pivot = mat_read(hybrid_mat, i, i);
         for (long long j=0; j < hybrid_mat->col; j++){
