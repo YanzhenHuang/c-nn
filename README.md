@@ -13,6 +13,8 @@ Mac:
 gcc -o ./exec_macos/main main.c linalg.c xlinalg.c -lm
 ```
 
+Sample result of running `main.c`:
+
 ```zsh
 ===== Basic Matrix Operations ===
 Left Matrix (L):
