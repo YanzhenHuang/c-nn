@@ -152,7 +152,7 @@ Matrix* xmat_readcol(Matrix*mat, long long j){
 }
 
 Matrix* xmat_solve(Matrix* A, Matrix* b){
-    if (A->row != b->row){
+    if (A->col != b->row){
         printf("Solve equation failed: Unable to solve incompatible matrices. \n"
                 "A: %lld x %lld, b: %lld x %lld\n", A->row, A->col, b->row, b->col);
         exit(1);
