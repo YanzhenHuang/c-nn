@@ -1,2 +1,4 @@
 .vscode
 .notebook
+exec_macos/*
+exec_win/*
