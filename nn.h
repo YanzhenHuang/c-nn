@@ -3,7 +3,7 @@
  * @brief Activation Function. 
  * 
  */
-typedef double (*Activation)(double);
+typedef double (*Activation)(double, bool);
 
 typedef struct {
     Matrix* weights;
@@ -25,7 +25,7 @@ typedef struct {
  * @param x Input.
  * @return double 
  */
-double ReLU(double x);
+double ReLU(double x, bool forward);
 
 /**
  * @brief Sigmoid activation function.
@@ -33,7 +33,7 @@ double ReLU(double x);
  * @param x Input.
  * @return double 
  */
-double Sigmoid(double x);
+double Sigmoid(double x, bool forward);
 
 /**
  * @brief Build a neural network.

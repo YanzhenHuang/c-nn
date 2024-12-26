@@ -14,12 +14,22 @@
 #include <math.h>
 #include "nn.h"
 
-double ReLU (double x){
-    return x > 0 ? x : 0;
+double ReLU (double x, bool forward){
+    if (forward){
+        return x > 0 ? x : 0;
+    }else{
+        return x > 0 ? 1 : 0;
+    }
 }
 
-double Sigmoid (double x){
-    return 1 / (1 + exp(-x));
+double Sigmoid (double x, bool forward){
+    double activation = 1 / (1 + exp(-x));
+
+    if (forward){
+        return activation;
+    }else{
+        return activation * (1 - activation);
+    }
 }
 
 Layer* nn_buildLayer(long long input, long long output){
@@ -108,7 +118,7 @@ void nn_printNN(NN* nn){
 }
 
 Matrix* nn_forward(NN* nn, double* input, long long input_size){
-    double *biased_input = malloc(input_size + 1);
+    double *biased_input = malloc((input_size + 1) * sizeof(double));
     for (long long i=0; i < input_size; i++){
         biased_input[i] = input[i];
     }
@@ -119,6 +129,11 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++){
         Matrix* weights = nn->layers[layer]->weights;
         Matrix* product = mat_multmat(temp, weights);
+        
+        for (long long i=0; i < product->row * product->col; i++){
+            double prod_val = mat_read(product, 0, i);
+            product->data[i] = nn->activation(prod_val, true);
+        }
         temp = product;
     }
     return mat_transpose(temp);
