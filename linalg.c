@@ -111,6 +111,26 @@ Matrix* mat_addmat(Matrix* mat_1, Matrix* mat_2){
     return added;
 }
 
+Matrix* mat_pwpmat(Matrix* mat_1, Matrix* mat_2){
+    if (mat_1->row != mat_2->row || mat_1->col != mat_2->col){
+        printf("Cannot point-wise product matrix with different size.\n"
+                "mat have size %lld x %lld while val have size %lld x %lld.",
+                mat_1->row, mat_1->col, mat_2->row, mat_2->col);
+        exit(1);
+    }
+
+    double* empty_data = malloc(mat_1->row * mat_1->col * sizeof(double));
+    Matrix* produced = mat_create(mat_1->row, mat_2->col, empty_data);
+
+    for (long long i=0; i<mat_1->row; i++){
+        for (long long j=0; j<mat_1->col; j++){
+            double product = pow(mat_read(mat_1, i, j), mat_read(mat_2, i, j));
+            produced = mat_write(produced, i, j, product);
+        }
+    }
+    return produced;
+}
+
 Matrix* mat_multmat(Matrix* mat_l, Matrix* mat_r){
     if (mat_l->col != mat_r->row){
         fprintf(stderr, "Cannot multiply matrx with size %lld x %lld and size %lld x %lld.", mat_l->row, mat_l->col, mat_r->row, mat_r->col);

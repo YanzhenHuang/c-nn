@@ -82,6 +82,15 @@ Matrix* mat_multscal(Matrix* mat, double val);
 Matrix* mat_addmat(Matrix* mat_1, Matrix* mat_2);
 
 /**
+ * @brief Point-wise production of two matrices.
+ * 
+ * @param mat_1 Matrix struct pointer of the first matrix.
+ * @param mat_2 Matrix struct pointer of the second matrix.
+ * @return Matrix* 
+ */
+Matrix* mat_pwpmat(Matrix* mat_1, Matrix* mat_2);
+
+/**
  * @brief Matrix multiplication.
  * 
  * @param mat_l Left matrix.

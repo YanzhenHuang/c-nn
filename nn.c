@@ -139,17 +139,25 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
 }
 
 Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
-    // Column matrix
+    // Target should be in column matrix.
+    if (target->col != 1 || forward_output->col != 1){
+        fprintf(stderr, "Backward propagation failed: Target and forward output should be in column matrix.");
+        exit(1);
+    }
+
+    // Error: Column Vector
     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
-
-    Matrix** layer_gradients = calloc(nn->hidden_num + 2, sizeof(Matrix*));
-    layer_gradients[nn->hidden_num + 1] = total_error;
-
+    
     Matrix* output = forward_output;
 
-    // Matrix* gradient = nn->activation();
-    for (long long i = nn->hidden_num + 1; i > 0; i--){
+    Matrix* gradient = xmat_traverse(total_error, nn->activation, false);
+
+
+    // From the back most layer to the first layer.
+    for (long long i = nn->hidden_num + 1; i >= 0; i--){
         Matrix* weights = nn->layers[i]->weights;
+
+
         // All neurons in a layer.
         for (long long n = 0; n < weights->row; n++){
             Matrix* neuron = xmat_readrow(weights, n);    // Input weights of the first Nueron.
