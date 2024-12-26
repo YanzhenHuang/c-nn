@@ -67,6 +67,15 @@ Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st,
 Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r);
 
 /**
+ * @brief Stack two matrices vertically.
+ * 
+ * @param mat_u Up matrix struct pointer.
+ * @param mat_d Down matrix struct pointer.
+ * @return Matrix* 
+ */
+Matrix* xmat_vstack(Matrix* mat_u, Matrix* mat_d);
+
+/**
  * @brief Calculate the determinant of a matrix.
  * 
  * @param mat Matrix struct pointer.

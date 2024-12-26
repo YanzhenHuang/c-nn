@@ -91,8 +91,7 @@ Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r){
         exit(1);
     }
 
-    double* empty_data = malloc((mat_l->row) * (mat_l->col + mat_r->col) * sizeof(double));
-    Matrix* hstack = mat_create(mat_l->row, mat_l->col + mat_r->col, empty_data);
+    Matrix* hstack = xmat_diag(mat_l->row, mat_l->col + mat_r->col, 0.0);
 
     // Copy mat_l
     for (long long i = 0; i < mat_l->row; i++) {
@@ -111,6 +110,32 @@ Matrix* xmat_hstack(Matrix* mat_l, Matrix* mat_r){
     }
 
     return hstack;
+}
+
+Matrix* xmat_vstack(Matrix* mat_u, Matrix* mat_d){
+    if (mat_u->col != mat_d->col){
+        printf("Vstack failed: Invalid matrix size. mat_u: %lld x %lld, mat_d: %lld x %lld.",
+                mat_u->row, mat_u->col, mat_d->row, mat_d->col);
+        exit(1);
+    }
+
+    Matrix* hstack = xmat_diag(mat_u->row + mat_u->row, mat_u->col, 0.0);
+    
+    // Copy mat_u
+    for (long long i=0; i< mat_u->row; i++){
+        for (long long j=0; j < mat_u->col; j++){
+            double this_val = mat_read(mat_u, i, j);
+            mat_write(hstack, i, j, this_val);
+        }
+    }
+
+    // Copy mat_d
+    for (long long i=0; i < mat_d->row; i++){
+        for (long long j=0; j < mat_d->col; j++){
+            double this_val = mat_read(mat_d, i, j);
+            mat_write(hstack, i + mat_u->row, j, this_val);
+        }
+    }
 }
 
 double xmat_det(Matrix*mat){
