@@ -106,3 +106,20 @@ void nn_printNN(NN* nn){
         printf("\n");
     }
 }
+
+Matrix* nn_forward(NN* nn, double* input, long long input_size){
+    double *biased_input = malloc(input_size + 1);
+    for (long long i=0; i < input_size; i++){
+        biased_input[i] = input[i];
+    }
+    biased_input[input_size] = 1;
+
+
+    Matrix* temp = mat_create(1, input_size + 1, biased_input);
+    for (long long layer = 0; layer < nn->hidden_num + 2; layer++){
+        Matrix* weights = nn->layers[layer]->weights;
+        Matrix* product = mat_multmat(temp, weights);
+        temp = product;
+    }
+    return mat_transpose(temp);
+}

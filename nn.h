@@ -53,3 +53,13 @@ NN* nn_buildNN(long long input_size, long long hidden_size, long long output_siz
  * @param nn Pointer to neural network struct.
  */
 void nn_printNN(NN* nn);
+
+/**
+ * @brief Forward propagation.
+ * 
+ * @param nn Neural network struct pointer.
+ * @param input Input array.
+ * @param input_size Input size.
+ * @return double* 
+ */
+Matrix* nn_forward(NN* nn, double* input, long long input_size);

@@ -113,7 +113,10 @@ Matrix* mat_addmat(Matrix* mat_1, Matrix* mat_2){
 
 Matrix* mat_multmat(Matrix* mat_l, Matrix* mat_r){
     if (mat_l->col != mat_r->row){
-        printf("Cannot multiply matrx with size %lld x %lld and size %lld x %lld.", mat_l->row, mat_l->col, mat_r->row, mat_r->col);
+        fprintf(stderr, "Cannot multiply matrx with size %lld x %lld and size %lld x %lld.", mat_l->row, mat_l->col, mat_r->row, mat_r->col);
+        printf("\nTrying to multiply:\n");
+        mat_print(mat_l);
+        mat_print(mat_r);
         exit(1);
     }
 

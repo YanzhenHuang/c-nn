@@ -17,13 +17,13 @@
 int all(){
         printf("===== Basic Matrix Operations =====\n");
     Matrix* L = mat_create(2,3, (double[]){
-        1, 2, 3, 
+        1, 2, 3,
         4, 5, 6
     });
-    Matrix* R = mat_create(3,2, (double[]){
-        7, 8, 
-        9, 10,
-        11, 12
+    Matrix* R = mat_create(3,4, (double[]){
+        7, 8, 9, 10,
+        11, 12, 13, 14,
+        15, 16, 17, 18
     });
     Matrix* Mul = mat_multmat(L, R);
     Matrix* RT = mat_transpose(R);
@@ -150,9 +150,14 @@ int all(){
 void test(){
     NN* nn = nn_buildNN(2, 3, 2, 5, Sigmoid);
     nn_printNN(nn);
+    
+    Matrix* output = nn_forward(nn, (double[]){1,2}, 2);
+    mat_print(output);
+    
 }
 
 int main(){
     test();
+    // all();
     return 0;
 }
