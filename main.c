@@ -12,7 +12,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <time.h>
-# include "xlinalg.h"
+# include "nn.h"
 
 int all(){
         printf("===== Basic Matrix Operations =====\n");
@@ -148,13 +148,11 @@ int all(){
 }
 
 void test(){
-    Matrix* eye3 = xmat_diag(3, 3, 1);
-    Matrix* rand3 = xmat_rand(3, 3);
-    Matrix* hstack = xmat_hstack(eye3, rand3);
-    mat_print(hstack);
+    NN* nn = nn_buildNN(2, 3, 2, 5, Sigmoid);
+    nn_printNN(nn);
 }
 
 int main(){
-    all();
+    test();
     return 0;
 }

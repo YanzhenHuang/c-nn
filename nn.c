@@ -24,29 +24,85 @@ double Sigmoid (double x){
 
 Layer* nn_buildLayer(long long input, long long output){
     Matrix* weights = xmat_rand(input, output);
+    if (weights == NULL){
+        printf("Build layer failed: Can't initialize weights.");
+        return NULL;
+    }
+
     Layer* layer = malloc(sizeof(Layer));
+    if (layer == NULL){
+        printf("Build layer failed.");
+        return NULL;
+    }
     layer->weights = weights;
     return layer;
 }
 
-NN* nn_buildNN(long long input_size, long long hidden_size, long long ouptut_size, long long hidden_num, int activation){
+NN* nn_buildNN(
+    long long input_size, 
+    long long hidden_size, 
+    long long ouptut_size, 
+    long long hidden_num, 
+    Activation activation
+    ){
     NN* nn = malloc(sizeof(NN));
-    nn->layers = malloc((hidden_num + 2) * sizeof(Layer*));
+    if (nn == NULL){
+        fprintf(stderr, "Build NN failed: Can't allocate memory for NN.");
+        return NULL;
+    }
 
+    nn->input_size = input_size;
+    nn->hidden_size = hidden_size;
+    nn->hidden_num = hidden_num;
+    nn->layers = calloc(hidden_num + 2, sizeof(Layer*));
+    if (nn->layers == NULL){
+        fprintf(stderr, "Build NN failed: Can't allocate memory for layers.");
+        free(nn);
+        return NULL;
+    }
+    
     // Input Layer
     Layer* input_layer = nn_buildLayer(input_size + 1, hidden_size + 1);
+    if (input_layer == NULL){
+        fprintf(stderr, "Build NN failed: Can't allocate memory for input layer.");
+        free(nn->layers);
+        free(nn);
+        return NULL;
+    }
+    
     nn->layers[0] = input_layer;
     
     // Hidden Layer
-    for(long long i=0; i < hidden_num; i++){
-        nn->layers[i] = nn_buildLayer(hidden_size + 1, hidden_size + 1);
+    for(long long i=1; i < hidden_num + 1; i++){
+        Layer* hidden_layer = nn_buildLayer(hidden_size + 1, hidden_size + 1);
+        if (hidden_layer == NULL){
+            fprintf(stderr, "Build NN failed: Can't allocate memory for hidden layer.");
+            return NULL;
+        }
+        nn->layers[i] = hidden_layer;
     }
-
+    
     // Output Layer
-    Layer* output_layer = nn_buildLayer(hidden_size + 1, ouptut_size + 1);
+    Layer* output_layer = nn_buildLayer(hidden_size + 1, ouptut_size);
+    if (output_layer == NULL){
+        fprintf(stderr, "Build NN failed: Can't allocate memory for output layer.");
+        return NULL;
+    }
     nn->layers[hidden_num + 1] = output_layer;
-
     nn->activation = activation;
-
     return nn;
+}
+
+void nn_printNN(NN* nn){
+    Layer** layers = nn->layers;
+    for(long long k=0; k < nn->hidden_num + 2; k++){
+        Matrix* weights = layers[k]->weights;
+        if (weights == NULL){
+            fprintf(stderr, "Print NN failed: Can't print weights.");
+            return;
+        }
+        printf("Layer %lld at %p:\n", k+1, weights);
+        mat_print(weights);
+        printf("\n");
+    }
 }

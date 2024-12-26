@@ -1,13 +1,23 @@
 #include "xlinalg.h"
+/**
+ * @brief Activation Function. 
+ * 
+ */
+typedef double (*Activation)(double);
 
 typedef struct {
     Matrix* weights;
 } Layer;
 
 typedef struct {
+    long long input_size;
+    long long hidden_size;
+    long long output_size;
+    long long hidden_num;
     Layer** layers;
-    int activation;
+    Activation activation;
 } NN;
+
 
 /**
  * @brief ReLU activation function.
@@ -26,15 +36,6 @@ double ReLU(double x);
 double Sigmoid(double x);
 
 /**
- * @brief Build a perceptron layer.
- * 
- * @param input Input size.
- * @param output Output size.
- * @return Layer* 
- */
-Layer* nn_buildLayer(long long input, long long output);
-
-/**
  * @brief Build a neural network.
  * 
  * @param input_size Input size.
@@ -44,4 +45,11 @@ Layer* nn_buildLayer(long long input, long long output);
  * @param activation Pointer to the activation function.
  * @return NN* 
  */
-NN* nn_buildNN(long long input_size, long long hidden_size, long long output_size, long long hidden_num, int activation);
+NN* nn_buildNN(long long input_size, long long hidden_size, long long output_size, long long hidden_num, Activation activation);
+
+/**
+ * @brief Print neural network.
+ * 
+ * @param nn Pointer to neural network struct.
+ */
+void nn_printNN(NN* nn);
