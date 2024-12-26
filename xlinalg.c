@@ -13,36 +13,52 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdarg.h>
+#include <time.h>
 #include "xlinalg.h"
+
+Matrix* _xmat_traverse(Matrix* mat, long long row, long long col, 
+                        MatrixElemenetOperation operation, ...){
+    va_list args;
+    va_start(args, operation);
+    for (long long i=0; i < row; i++){
+        for (long long j=0; j < col; j++){
+            mat = operation(mat, i, j, args);
+        }
+    }
+
+    va_end(args);
+    return mat;
+}
+
+Matrix* _set_diagonal(Matrix* mat, long long i, long long j, va_list args){
+    double val = va_arg(args, double);
+    if (i == j){
+        mat_write(mat, i, j, val);
+    }
+    return mat;
+}
+
+Matrix* _set_random(Matrix* mat, long long i, long long j, va_list args){
+    double val = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+    mat = mat_write(mat, i, j, val);
+    return mat;
+}
 
 Matrix* xmat_diag(long long row, long long col, double val){
     double* empty_data = malloc(row * col * sizeof(double));
     Matrix* diag_mat = mat_create(row, col, empty_data);
 
-    for(long long i=0; i < row; i++){
-        for(long long j=0; j < col; j++){
-            if (i == j){
-                diag_mat = mat_write(diag_mat, i, j, val);
-            }
-        }
-    }
-
-    return diag_mat;
+    return _xmat_traverse(diag_mat, row, col, _set_diagonal, val);
 }
 
 Matrix* xmat_rand(long long row, long long col){
-    srand((unsigned int)time(NULL));
+    srand((unsigned int) time(NULL));
 
     double* empty_data = malloc(row * col * sizeof(double));
     Matrix* rand_mat = mat_create(row, col, empty_data);
-    
-    for(long long i=0; i < row; i++){
-        for(long long j=0; j < col; j++){
-            double val = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
-            rand_mat = mat_write(rand_mat, i, j, val);
-        }
-    }
 
+    return _xmat_traverse(rand_mat, row, col, _set_random);
 }
 
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){

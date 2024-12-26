@@ -147,6 +147,13 @@ int all(){
     return 0;
 }
 
+void test(){
+    Matrix* eye3 = xmat_diag(3, 3, 1);
+    Matrix* rand3 = xmat_rand(3, 3);
+    Matrix* hstack = xmat_hstack(eye3, rand3);
+    mat_print(hstack);
+}
+
 int main(){
     all();
     return 0;

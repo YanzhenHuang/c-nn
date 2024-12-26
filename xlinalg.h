@@ -9,6 +9,12 @@ typedef struct {
 } Optional;
 
 /**
+ * @brief Matrix element operation function. Operates on a single matrix element.
+ * 
+ */
+typedef Matrix* (*MatrixElemenetOperation)(Matrix*, long long, long long, va_list);
+
+/**
  * @brief Generate a diagonal matrix.
  * 
  * @param row Row size of matrix.
