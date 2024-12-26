@@ -18,9 +18,9 @@ typedef Matrix* (*MatrixElementOperation)(Matrix*, long long, long long, va_list
  * @brief Traverse a matrix and operate on single element.
  * 
  * @param mat Matrix struct pointer.
- * @param row Matrix row size.
- * @param col Matrix column size.
- * @param operation Operation function pointer
+ * @param row Matrix height, number of rows.
+ * @param col Matrix width, number of columns.
+ * @param operation Operation function pointer.
  * @param ... Dynamic arguments.
  * @return Matrix* 
  */
@@ -29,8 +29,8 @@ Matrix* xmat_traverse(Matrix* mat, MatrixElementOperation operation, ...);
 /**
  * @brief Generate a diagonal matrix.
  * 
- * @param row Row size of matrix.
- * @param col Column size of matrix.
+ * @param row Matrix height, number of rows.
+ * @param col Matrix width, number of columns.
  * @param val Value of the diagonal.
  * @return Matrix* 
  */
@@ -39,8 +39,8 @@ Matrix* xmat_diag(long long row, long long col, double val);
 /**
  * @brief Generate a random matrix.
  * 
- * @param row Row size of matrix.
- * @param col Column size of matrix.
+ * @param row Matrix height, number of rows.
+ * @param col Matrix width, number of columns.
  * @return Matrix* 
  */
 Matrix* xmat_rand(long long row, long long col);
@@ -87,7 +87,7 @@ double xmat_det(Matrix*mat);
  * @brief Acquire a row of a matrix.
  * 
  * @param mat Mother matrix struct pointer.
- * @param i Row index
+ * @param i Row index, which row to get.
  * @return Matrix* 
  */
 Matrix* xmat_readrow(Matrix*mat, long long i);
@@ -96,7 +96,7 @@ Matrix* xmat_readrow(Matrix*mat, long long i);
  * @brief Acquire a column of a matrix.
  * 
  * @param mat Mother matrix struct pointer.
- * @param j Column index.
+ * @param j Column index, which column to get.
  * @return Matrix* 
  */
 Matrix* xmat_readcol(Matrix*mat, long long j);
@@ -104,8 +104,8 @@ Matrix* xmat_readcol(Matrix*mat, long long j);
 /**
  * @brief Solve for matrix equation Ax=b.
  * 
- * @param A A matrix
- * @param b b vector
+ * @param A A matrix struct pointer.
+ * @param b b matrix struct pointer.
  * @return Matrix* 
  */
 Matrix* xmat_solve(Matrix* A, Matrix* b);
@@ -121,8 +121,8 @@ Matrix* xmat_inv(Matrix*mat);
 /**
  * @brief Identify if two matrices are equal.
  * 
- * @param mat_1 Matrix struct pointer of the first matrix.
- * @param mat_2 Matrix struct pointer of the second matrix.
+ * @param mat_1 First matrix struct pointer.
+ * @param mat_2 Second matrix struct pointer.
  * @return bool
  */
 bool xmat_isEqual(Matrix* mat_1, Matrix* mat_2);
