@@ -234,7 +234,8 @@ Matrix* xmat_solve(Matrix* A, Matrix* b){
         // Check for zero-pivot.
         double pivot = mat_read(hybrid_mat, i, i);
         if (pivot == 0){
-            printf("Solve equation failed: Pivot element is zero at row %lld during forward elimination.", i);
+            printf("Solve equation failed: Pivot element is zero at"
+                    " row %lld during forward elimination.", i);
             exit(1);
         }
 
