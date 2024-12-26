@@ -17,12 +17,11 @@
 #include <time.h>
 #include "xlinalg.h"
 
-Matrix* _xmat_traverse(Matrix* mat, long long row, long long col, 
-                        MatrixElemenetOperation operation, ...){
+Matrix* xmat_traverse(Matrix* mat, MatrixElementOperation operation, ...){
     va_list args;
     va_start(args, operation);
-    for (long long i=0; i < row; i++){
-        for (long long j=0; j < col; j++){
+    for (long long i=0; i < mat->row; i++){
+        for (long long j=0; j < mat->col; j++){
             mat = operation(mat, i, j, args);
         }
     }
@@ -49,7 +48,7 @@ Matrix* xmat_diag(long long row, long long col, double val){
     double* empty_data = malloc(row * col * sizeof(double));
     Matrix* diag_mat = mat_create(row, col, empty_data);
 
-    return _xmat_traverse(diag_mat, row, col, _set_diagonal, val);
+    return xmat_traverse(diag_mat, _set_diagonal, val);
 }
 
 Matrix* xmat_rand(long long row, long long col){
@@ -58,7 +57,7 @@ Matrix* xmat_rand(long long row, long long col){
     double* empty_data = malloc(row * col * sizeof(double));
     Matrix* rand_mat = mat_create(row, col, empty_data);
 
-    return _xmat_traverse(rand_mat, row, col, _set_random);
+    return xmat_traverse(rand_mat, _set_random);
 }
 
 Matrix* xmat_submat(Matrix* mat, long long i_st, long long i_ed, long long j_st, long long j_ed){

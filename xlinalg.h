@@ -12,7 +12,19 @@ typedef struct {
  * @brief Matrix element operation function. Operates on a single matrix element.
  * 
  */
-typedef Matrix* (*MatrixElemenetOperation)(Matrix*, long long, long long, va_list);
+typedef Matrix* (*MatrixElementOperation)(Matrix*, long long, long long, va_list);
+
+/**
+ * @brief Traverse a matrix and operate on single element.
+ * 
+ * @param mat Matrix struct pointer.
+ * @param row Matrix row size.
+ * @param col Matrix column size.
+ * @param operation Operation function pointer
+ * @param ... Dynamic arguments.
+ * @return Matrix* 
+ */
+Matrix* xmat_traverse(Matrix* mat, MatrixElementOperation operation, ...);
 
 /**
  * @brief Generate a diagonal matrix.

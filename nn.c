@@ -10,22 +10,28 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <math.h>
 #include "nn.h"
 
-double ReLU (double x, bool forward){
+Matrix* ReLU (Matrix* mat, long long i, long long j, va_list args){
+    bool forward = va_arg(args, int);
+
+    double x = mat_read(mat, i, j);
     if (x < 0) return 0;
-    return forward ? x : 1;
+    return mat_write(mat, i, j, forward ? x : 1);
 }
 
-double Sigmoid (double x, bool forward){
-    double activation = 1 / (1 + exp(-x));
+Matrix* Sigmoid (Matrix* mat, long long i, long long j, va_list args){
+    bool forward = va_arg(args, int);
+    double x = mat_read(mat, i, j);
 
+    double activation = 1 / (1 + exp(-x));
     if (forward){
-        return activation;
+        return mat_write(mat, i, j, activation);
     }else{
-        return activation * (1 - activation);
+        return mat_write(mat, i, j, 1 - activation);
     }
 }
 
@@ -50,7 +56,7 @@ NN* nn_buildNN(
     long long hidden_size, 
     long long ouptut_size, 
     long long hidden_num, 
-    Activation activation
+    MatrixElementOperation activation
     ){
     NN* nn = malloc(sizeof(NN));
     if (nn == NULL){
@@ -120,18 +126,19 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
         biased_input[i] = input[i];
     }
     biased_input[input_size] = 1;
-
-
+    
     Matrix* temp = mat_create(1, input_size + 1, biased_input);
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++){
         Matrix* weights = nn->layers[layer]->weights;
         Matrix* product = mat_multmat(temp, weights);
-        
-        for (long long i=0; i < product->row * product->col; i++){
-            double prod_val = mat_read(product, 0, i);
-            product->data[i] = nn->activation(prod_val, true);
-        }
+        // Activation
+        product = xmat_traverse(product, nn->activation, true);
         temp = product;
     }
     return mat_transpose(temp);
 }
+
+// Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
+//     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+//     // Matrix* gradient = nn->activation();
+// }

@@ -1,10 +1,4 @@
 #include "xlinalg.h"
-/**
- * @brief Activation Function. 
- * 
- */
-typedef double (*Activation)(double, bool);
-
 typedef struct {
     Matrix* weights;
 } Layer;
@@ -15,7 +9,7 @@ typedef struct {
     long long output_size;
     long long hidden_num;
     Layer** layers;
-    Activation activation;
+    MatrixElementOperation activation;
 } NN;
 
 
@@ -25,7 +19,7 @@ typedef struct {
  * @param x Input.
  * @return double 
  */
-double ReLU(double x, bool forward);
+Matrix* ReLU(Matrix* mat, long long i, long long j, va_list args);
 
 /**
  * @brief Sigmoid activation function.
@@ -33,7 +27,7 @@ double ReLU(double x, bool forward);
  * @param x Input.
  * @return double 
  */
-double Sigmoid(double x, bool forward);
+Matrix* Sigmoid(Matrix* mat, long long i, long long j, va_list args);
 
 /**
  * @brief Build a neural network.
@@ -45,7 +39,7 @@ double Sigmoid(double x, bool forward);
  * @param activation Pointer to the activation function.
  * @return NN* 
  */
-NN* nn_buildNN(long long input_size, long long hidden_size, long long output_size, long long hidden_num, Activation activation);
+NN* nn_buildNN(long long input_size, long long hidden_size, long long output_size, long long hidden_num, MatrixElementOperation activation);
 
 /**
  * @brief Print neural network.
