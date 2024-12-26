@@ -15,11 +15,8 @@
 #include "nn.h"
 
 double ReLU (double x, bool forward){
-    if (forward){
-        return x > 0 ? x : 0;
-    }else{
-        return x > 0 ? 1 : 0;
-    }
+    if (x < 0) return 0;
+    return forward ? x : 1;
 }
 
 double Sigmoid (double x, bool forward){
