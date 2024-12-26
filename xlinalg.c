@@ -136,6 +136,8 @@ Matrix* xmat_vstack(Matrix* mat_u, Matrix* mat_d){
             mat_write(hstack, i + mat_u->row, j, this_val);
         }
     }
+
+    return hstack;
 }
 
 double xmat_det(Matrix*mat){
