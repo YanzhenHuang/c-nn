@@ -138,7 +138,26 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
     return mat_transpose(temp);
 }
 
-// Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
-//     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
-//     // Matrix* gradient = nn->activation();
-// }
+Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
+    // Column matrix
+    Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+
+    Matrix** layer_gradients = calloc(nn->hidden_num + 2, sizeof(Matrix*));
+    layer_gradients[nn->hidden_num + 1] = total_error;
+
+    Matrix* output = forward_output;
+
+    // Matrix* gradient = nn->activation();
+    for (long long i = nn->hidden_num + 1; i > 0; i--){
+        Matrix* weights = nn->layers[i]->weights;
+        // All neurons in a layer.
+        for (long long n = 0; n < weights->row; n++){
+            Matrix* neuron = xmat_readrow(weights, n);    // Input weights of the first Nueron.
+            Matrix* gradient = mat_multmat(total_error, gradient);
+        }
+    }
+
+    // TODO: Finish the backward propagation logic.
+    // This is returned just to avoid compilation error.
+    return xmat_diag(nn->hidden_num + 2, nn->hidden_num + 2, 0);
+}
