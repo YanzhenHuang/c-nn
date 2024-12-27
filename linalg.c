@@ -124,7 +124,7 @@ Matrix* mat_pwpmat(Matrix* mat_1, Matrix* mat_2){
 
     for (long long i=0; i<mat_1->row; i++){
         for (long long j=0; j<mat_1->col; j++){
-            double product = pow(mat_read(mat_1, i, j), mat_read(mat_2, i, j));
+            double product = mat_read(mat_1, i, j) * mat_read(mat_2, i, j);
             produced = mat_write(produced, i, j, product);
         }
     }
