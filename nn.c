@@ -31,7 +31,7 @@ Matrix* Sigmoid (Matrix* mat, long long i, long long j, va_list args){
     if (forward){
         return mat_write(mat, i, j, activation);
     }else{
-        return mat_write(mat, i, j, 1 - activation);
+        return mat_write(mat, i, j, activation * (1 - activation));
     }
 }
 
