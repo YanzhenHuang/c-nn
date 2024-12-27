@@ -141,7 +141,14 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
 Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
     // Target should be in column matrix.
     if (target->col != 1 || forward_output->col != 1){
-        fprintf(stderr, "Backward propagation failed: Target and forward output should be in column matrix.");
+        fprintf(stderr, "Backward propagation failed: "
+                " Target and forward output should be a column matrix.");
+        exit(1);
+    }
+    // Shape should match
+    if (forward_output->row != target->row){
+        fprintf(stderr, "Backward propagation failed: "
+                "Forward output and target column matrices should have the same height.");
         exit(1);
     }
 
@@ -150,19 +157,26 @@ Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
     
     Matrix* output = forward_output;
 
-    Matrix* gradient = xmat_traverse(total_error, nn->activation, false);
+    Matrix* cur_gradients = xmat_traverse(total_error, nn->activation, false);
+
 
 
     // From the back most layer to the first layer.
     for (long long i = nn->hidden_num + 1; i >= 0; i--){
         Matrix* weights = nn->layers[i]->weights;
 
+        Matrix* previous_gradients = mat_multmat(weights, cur_gradients);
+
+        printf("Gradient %lld: \n", i);
+        mat_print(cur_gradients);
+
+        cur_gradients = previous_gradients;
 
         // All neurons in a layer.
-        for (long long n = 0; n < weights->row; n++){
-            Matrix* neuron = xmat_readrow(weights, n);    // Input weights of the first Nueron.
-            Matrix* gradient = mat_multmat(total_error, gradient);
-        }
+        // for (long long n = 0; n < weights->row; n++){
+        //     Matrix* neuron = xmat_readrow(weights, n);    // Input weights of the first Nueron.
+        //     Matrix* gradient = mat_multmat(total_error, gradient);
+        // }
     }
 
     // TODO: Finish the backward propagation logic.

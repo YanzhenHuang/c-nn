@@ -154,6 +154,10 @@ void demo_nn(){
     
     Matrix* output = nn_forward(nn, (double[]){1,2}, 2);
     mat_print(output);
+
+    Matrix* Yd = mat_create(2, 1, (double[]){2,1});
+
+    nn_backward(nn, output, Yd);
 }
 
 int main(int argc, char* argv[], char**envp){
@@ -170,7 +174,7 @@ int main(int argc, char* argv[], char**envp){
     }
     if (strcmp(val, "xlinalg") == 0){
         demo_xlinalg();
-    }else if(strcmp(val, "nn")){
+    }else if(strcmp(val, "nn") == 0){
         demo_nn();
     }else{
         fprintf(stderr, "Unknown demo type %s", val);

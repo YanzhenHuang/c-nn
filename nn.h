@@ -57,3 +57,13 @@ void nn_printNN(NN* nn);
  * @return double* 
  */
 Matrix* nn_forward(NN* nn, double* input, long long input_size);
+
+/**
+ * @brief Backward propagation.
+ * 
+ * @param nn Neural network struct pointer.
+ * @param forward_output Output of the forward propagation.
+ * @param target Desired output.
+ * @return Matrix* 
+ */
+Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target);
