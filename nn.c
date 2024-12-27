@@ -17,9 +17,10 @@
 
 Matrix* ReLU (Matrix* mat, long long i, long long j, va_list args){
     bool forward = va_arg(args, int);
-
     double x = mat_read(mat, i, j);
-    if (x < 0) return 0;
+
+    if (x < 0) return mat_write(mat, i, j, 0);
+
     return mat_write(mat, i, j, forward ? x : 1);
 }
 
@@ -159,8 +160,7 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         exit(1);
     }
 
-    double lr = 0.01;
-
+    double lr = 0.001;
 
     // Error: Column Vector
     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));

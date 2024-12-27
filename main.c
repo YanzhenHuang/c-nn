@@ -160,6 +160,49 @@ void demo_nn(){
     nn_printNN(nn);
 }
 
+void demo_xornn(){
+    srand(time(0));
+
+    // A simple 2-layered NN to calculate the XOR problem.
+    NN* xor_nn = nn_buildNN(2, 2, 1, 0, ReLU);
+    nn_printNN(xor_nn);
+
+    for(int epoch = 0; epoch < 999; epoch++){
+        printf("Epoch %d\n", epoch+1);
+        int x_1 = rand() % 2;
+        int x_2 = rand() % 2;
+        int xor = x_1 ^ x_2;
+        
+        Matrix* output = nn_forward(xor_nn, (double[]){x_1, x_2}, 2);
+        Matrix* Yd = mat_create(1,1, (double[]){xor});
+
+        xor_nn = nn_backward(xor_nn, output, Yd);
+    }
+
+    double correct = 0;
+    double incorrect = 0;
+
+    for(int epoch = 0; epoch < 9999; epoch++){
+        printf("Epoch %d\n", epoch+1);
+        int x_1 = rand() % 2;
+        int x_2 = rand() % 2;
+        int xor = x_1 ^ x_2;
+        
+        Matrix* output = nn_forward(xor_nn, (double[]){x_1, x_2}, 2);
+        Matrix* Yd = mat_create(1,1, (double[]){xor});
+        int res = mat_read(output, 0, 0) > 0.5 ? 1 : 0;
+
+        if(res == xor){
+            correct++;
+        }else{
+            incorrect++;
+        }
+    }
+    nn_printNN(xor_nn);
+
+    printf("Accuracy: %f\n", (correct/(correct+incorrect)));
+}
+
 int main(int argc, char* argv[], char**envp){
     if (argc < 2){
         fprintf(stderr, "Usage: %s <demo>\n", argv[0]);
@@ -176,7 +219,10 @@ int main(int argc, char* argv[], char**envp){
         demo_xlinalg();
     }else if(strcmp(val, "nn") == 0){
         demo_nn();
-    }else{
+    }else if(strcmp(val, "xornn") == 0){
+        demo_xornn();
+    }
+    else{
         fprintf(stderr, "Unknown demo type %s", val);
         exit(1);
     }
