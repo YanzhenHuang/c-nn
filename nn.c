@@ -170,6 +170,7 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
     Matrix* cur_deltas = xmat_traverse(total_error, nn->activation, false);
 
     // From the back most layer to the first layer.
+    // Propagate delta.
     for (long long layer = nn->hidden_num + 1; layer >= 0; layer--){
 
         nn->delta_states[layer] = cur_deltas;
@@ -181,11 +182,8 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         cur_deltas = previous_deltas;
     }
 
-    printf(
-        "*** DEBUG: Outputs & Gradients of Each Layer ***\n"
-        );
-
-
+    // Forward update the weights.
+    // Sequence doesn't matter.
     for(long long layer = 0; layer < nn->hidden_num + 2; layer++){
         Matrix* cur_weights = nn->layers[layer]->weights;
 
@@ -202,35 +200,31 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         Matrix* _dw = mat_multmat(deltas_gradient, previous_outputs);
 
         Matrix* dw = mat_transpose(mat_multscal(_dw, lr));
-        
+
         nn->layers[layer]->weights = mat_addmat(nn->layers[layer]->weights, dw);
-
-        // printf("~~~~~~ Layer %lld ~~~~~~\n", layer);
-
-        // printf("Cur weights:\n");
-        // mat_print(cur_weights);
-
-        // printf("Prev outputs:\n");
-        // mat_print(previous_outputs);
-
-        // printf("Cur outputs:\n");
-        // mat_print(cur_outputs);
-
-        // printf("Gradient:\n");
-        // mat_print(gradient);
-
-        // printf("Next Deltas:\n");
-        // mat_print(next_deltas);
-
-
-        // printf("dw:\n");
-        // mat_print(dw);
-
     }   
 
-
-
-    // TODO: Finish the backward propagation logic.
-    // This is returned just to avoid compilation error.
     return nn;
 }
+
+// Copy this for debug.
+// printf("~~~~~~ Layer %lld ~~~~~~\n", layer);
+
+// printf("Cur weights:\n");
+// mat_print(cur_weights);
+
+// printf("Prev outputs:\n");
+// mat_print(previous_outputs);
+
+// printf("Cur outputs:\n");
+// mat_print(cur_outputs);
+
+// printf("Gradient:\n");
+// mat_print(gradient);
+
+// printf("Next Deltas:\n");
+// mat_print(next_deltas);
+
+
+// printf("dw:\n");
+// mat_print(dw);
