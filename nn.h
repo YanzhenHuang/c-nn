@@ -9,9 +9,10 @@ typedef struct {
     long long output_size;
     long long hidden_num;
     Layer** layers;
+    Matrix** output_states;
+    Matrix** delta_states;
     MatrixElementOperation activation;
 } NN;
-
 
 /**
  * @brief ReLU activation function.
@@ -66,4 +67,4 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size);
  * @param target Desired output.
  * @return Matrix* 
  */
-Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target);
+NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target);

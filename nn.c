@@ -67,6 +67,9 @@ NN* nn_buildNN(
     nn->input_size = input_size;
     nn->hidden_size = hidden_size;
     nn->hidden_num = hidden_num;
+    nn->output_states = malloc((nn->hidden_num + 3) * sizeof(Matrix*));
+    nn->delta_states = malloc((nn->hidden_num + 3) * sizeof(Matrix*));
+
     nn->layers = calloc(hidden_num + 2, sizeof(Layer*));
     if (nn->layers == NULL){
         fprintf(stderr, "Build NN failed: Can't allocate memory for layers.");
@@ -126,19 +129,23 @@ Matrix* nn_forward(NN* nn, double* input, long long input_size){
         biased_input[i] = input[i];
     }
     biased_input[input_size] = 1;
-    
+
     Matrix* temp = mat_create(1, input_size + 1, biased_input);
+    nn->output_states[0] = temp;
+
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++){
         Matrix* weights = nn->layers[layer]->weights;
         Matrix* product = mat_multmat(temp, weights);
         // Activation
         product = xmat_traverse(product, nn->activation, true);
+        // Save output states
+        nn->output_states[layer+1] = product;
         temp = product;
     }
     return mat_transpose(temp);
 }
 
-Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
+NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
     // Target should be in column matrix.
     if (target->col != 1 || forward_output->col != 1){
         fprintf(stderr, "Backward propagation failed: "
@@ -152,34 +159,78 @@ Matrix* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         exit(1);
     }
 
+    double lr = 0.01;
+
+
     // Error: Column Vector
     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
     
     Matrix* output = forward_output;
 
-    Matrix* cur_gradients = xmat_traverse(total_error, nn->activation, false);
-
-
+    Matrix* cur_deltas = xmat_traverse(total_error, nn->activation, false);
 
     // From the back most layer to the first layer.
-    for (long long i = nn->hidden_num + 1; i >= 0; i--){
-        Matrix* weights = nn->layers[i]->weights;
+    for (long long layer = nn->hidden_num + 1; layer >= 0; layer--){
 
-        Matrix* previous_gradients = mat_multmat(weights, cur_gradients);
+        nn->delta_states[layer] = cur_deltas;
 
-        printf("Gradient %lld: \n", i);
-        mat_print(cur_gradients);
+        Matrix* weights = nn->layers[layer]->weights;
 
-        cur_gradients = previous_gradients;
+        Matrix* previous_deltas = mat_multmat(weights, cur_deltas);
 
-        // All neurons in a layer.
-        // for (long long n = 0; n < weights->row; n++){
-        //     Matrix* neuron = xmat_readrow(weights, n);    // Input weights of the first Nueron.
-        //     Matrix* gradient = mat_multmat(total_error, gradient);
-        // }
+        cur_deltas = previous_deltas;
     }
+
+    printf(
+        "*** DEBUG: Outputs & Gradients of Each Layer ***\n"
+        );
+
+
+    for(long long layer = 0; layer < nn->hidden_num + 2; layer++){
+        Matrix* cur_weights = nn->layers[layer]->weights;
+
+        Matrix* previous_outputs = nn->output_states[layer];
+
+        Matrix* cur_outputs = nn->output_states[layer+1];
+
+        Matrix* gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false);
+
+        Matrix* next_deltas = nn->delta_states[layer];
+
+        Matrix* deltas_gradient = mat_pwpmat(next_deltas, gradient);
+
+        Matrix* _dw = mat_multmat(deltas_gradient, previous_outputs);
+
+        Matrix* dw = mat_transpose(mat_multscal(_dw, lr));
+        
+        nn->layers[layer]->weights = mat_addmat(nn->layers[layer]->weights, dw);
+
+        // printf("~~~~~~ Layer %lld ~~~~~~\n", layer);
+
+        // printf("Cur weights:\n");
+        // mat_print(cur_weights);
+
+        // printf("Prev outputs:\n");
+        // mat_print(previous_outputs);
+
+        // printf("Cur outputs:\n");
+        // mat_print(cur_outputs);
+
+        // printf("Gradient:\n");
+        // mat_print(gradient);
+
+        // printf("Next Deltas:\n");
+        // mat_print(next_deltas);
+
+
+        // printf("dw:\n");
+        // mat_print(dw);
+
+    }   
+
+
 
     // TODO: Finish the backward propagation logic.
     // This is returned just to avoid compilation error.
-    return xmat_diag(nn->hidden_num + 2, nn->hidden_num + 2, 0);
+    return nn;
 }

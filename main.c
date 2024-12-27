@@ -151,13 +151,13 @@ int demo_xlinalg(){
 void demo_nn(){
     NN* nn = nn_buildNN(2, 3, 2, 5, Sigmoid);
     nn_printNN(nn);
-    
+
     Matrix* output = nn_forward(nn, (double[]){1,2}, 2);
     mat_print(output);
 
     Matrix* Yd = mat_create(2, 1, (double[]){2,1});
-
-    nn_backward(nn, output, Yd);
+    nn = nn_backward(nn, output, Yd);
+    nn_printNN(nn);
 }
 
 int main(int argc, char* argv[], char**envp){

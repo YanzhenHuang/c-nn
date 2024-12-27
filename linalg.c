@@ -48,7 +48,7 @@ Matrix* mat_write(Matrix *matrix, long long i, long long j, double val){
 void mat_print(Matrix* matrix){
     for (long long i=0; i < matrix->row; i++){
         for (long long j=0; j < matrix->col; j++){
-            printf("%.2f  ", mat_read(matrix, i,j));
+            printf("%.4f  ", mat_read(matrix, i,j));
         }
         printf("\n");
     }
