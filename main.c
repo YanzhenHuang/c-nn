@@ -12,9 +12,10 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <time.h>
+# include <string.h>
 # include "nn.h"
 
-int all(){
+int demo_xlinalg(){
         printf("===== Basic Matrix Operations =====\n");
     Matrix* L = mat_create(2,3, (double[]){
         1, 2, 3,
@@ -147,17 +148,34 @@ int all(){
     return 0;
 }
 
-void test(){
+void demo_nn(){
     NN* nn = nn_buildNN(2, 3, 2, 5, Sigmoid);
     nn_printNN(nn);
     
     Matrix* output = nn_forward(nn, (double[]){1,2}, 2);
     mat_print(output);
-    
 }
 
-int main(){
-    test();
-    // all();
+int main(int argc, char* argv[], char**envp){
+    if (argc < 2){
+        fprintf(stderr, "Usage: %s <demo>\n", argv[0]);
+        exit(1);
+    }
+    // Parse terminal arguments.
+    char* op = argv[1];
+    char* val = argv[2];
+
+    if (strcmp(op, "-demo") != 0){
+        fprintf(stderr, "Unknown argument %s", argv[1]);
+    }
+    if (strcmp(val, "xlinalg") == 0){
+        demo_xlinalg();
+    }else if(strcmp(val, "nn")){
+        demo_nn();
+    }else{
+        fprintf(stderr, "Unknown demo type %s", val);
+        exit(1);
+    }
+
     return 0;
 }
