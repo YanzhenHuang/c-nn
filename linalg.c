@@ -29,7 +29,7 @@ Matrix *mat_create(long long row, long long col, double *data){
 }
 
 double mat_read(Matrix *matrix, long long i, long long j){
-    if (if i < 0 || j < 0 || i >= matrix->row || j >= matrix->col){
+    if (i < 0 || j < 0 || i >= matrix->row || j >= matrix->col){
         printf("Matrix location index out of bounds.\n");
         exit(1);
     }
