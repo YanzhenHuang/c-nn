@@ -164,10 +164,10 @@ void demo_xornn(){
     srand(time(0));
 
     // A simple 2-layered NN to calculate the XOR problem.
-    NN* xor_nn = nn_buildNN(2, 2, 1, 0, ReLU);
+    NN* xor_nn = nn_buildNN(2, 2, 1, 0, Sigmoid);
     nn_printNN(xor_nn);
 
-    for(int epoch = 0; epoch < 999; epoch++){
+    for(int epoch = 0; epoch < 5; epoch++){
         printf("Epoch %d\n", epoch+1);
         int x_1 = rand() % 2;
         int x_2 = rand() % 2;
@@ -179,28 +179,51 @@ void demo_xornn(){
         xor_nn = nn_backward(xor_nn, output, Yd);
     }
 
-    double correct = 0;
-    double incorrect = 0;
+    double tp = 0;
+    double tn = 0;
+    double fp = 0;
+    double fn = 0;
 
+    printf("Evaluating Samples...\n");
     for(int epoch = 0; epoch < 9999; epoch++){
-        printf("Epoch %d\n", epoch+1);
+        // printf("Sample %d\n", epoch+1);
         int x_1 = rand() % 2;
         int x_2 = rand() % 2;
         int xor = x_1 ^ x_2;
         
         Matrix* output = nn_forward(xor_nn, (double[]){x_1, x_2}, 2);
         Matrix* Yd = mat_create(1,1, (double[]){xor});
-        int res = mat_read(output, 0, 0) > 0.5 ? 1 : 0;
+        int res = mat_read(output, 0, 0) > 0 ? 1 : 0;
 
-        if(res == xor){
-            correct++;
-        }else{
-            incorrect++;
+        if (res == 1 && xor == 1){
+            tp ++;
+        }
+        else if (res == 1 && xor == 0){
+            fp ++;
+        }
+        else if (res == 0 && xor == 1){
+            fn ++;
+        }
+        else if (res == 0 && xor == 0){
+            tn ++;
         }
     }
+
+    double precision = tp / (double)(tp + fp);
+    double recall = tp / (double)(tp + fn);
+    double accuracy = (tp + tn) / (double)(tp + tn + fp + fn);
+    double f1 = (2 * precision * recall) / (double) (precision + recall);
+
     nn_printNN(xor_nn);
 
-    printf("Accuracy: %f\n", (correct/(correct+incorrect)));
+    printf("\n~~~ Confusion Matrix ~~~\n");
+    printf("TP: %f, TN: %f, FP: %f, FN: %f\n", tp, tn, fp, fn);
+
+    printf("\n~~~ Evaluation ~~~\n");
+    printf("Prc: %f\n", precision);
+    printf("Rec: %f\n", recall);
+    printf("Acc: %f\n", accuracy);
+    printf("F1: %f\n", f1);
 }
 
 int main(int argc, char* argv[], char**envp){

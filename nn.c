@@ -36,8 +36,16 @@ Matrix* Sigmoid (Matrix* mat, long long i, long long j, va_list args){
     }
 }
 
+Matrix* _layer_init(Matrix* mat, long long row, long long col, va_list args){
+    double scale = va_arg(args, double);
+    double val = ((double)rand() / RAND_MAX) * 2.0 * scale - scale;
+    return mat_write(mat, row, col, val);
+}
+
 Layer* nn_buildLayer(long long input, long long output){
-    Matrix* weights = xmat_rand(input, output);
+    // Matrix* weights = xmat_rand(input, output);
+    double scale = sqrt(6.0 / (input + output));
+    Matrix* weights = xmat_traverse(xmat_rand(input, output), _layer_init, scale);
     if (weights == NULL){
         printf("Build layer failed: Can't initialize weights.");
         return NULL;
@@ -160,7 +168,7 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         exit(1);
     }
 
-    double lr = 0.001;
+    double lr = 0.0001;
 
     // Error: Column Vector
     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
