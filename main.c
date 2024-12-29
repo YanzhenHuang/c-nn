@@ -184,7 +184,7 @@ void demo_xornn(){
     double fp = 0;
     double fn = 0;
 
-    printf("Evaluating Samples...\n");
+    printf("\nEvaluating Samples...\n\n");
     for(int epoch = 0; epoch < 9999; epoch++){
         // printf("Sample %d\n", epoch+1);
         int x_1 = rand() % 2;

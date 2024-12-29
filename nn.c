@@ -168,25 +168,21 @@ NN* nn_backward(NN* nn, Matrix* forward_output, Matrix* target){
         exit(1);
     }
 
-    double lr = 0.0001;
+    double lr = 10;
 
     // Error: Column Vector
     Matrix* total_error = mat_addmat(target, mat_multscal(forward_output, -1));
     
-    Matrix* output = forward_output;
-
+    // Running deltas: Initialized to the deltas of the output layer.
     Matrix* cur_deltas = xmat_traverse(total_error, nn->activation, false);
 
     // From the back most layer to the first layer.
     // Propagate delta.
     for (long long layer = nn->hidden_num + 1; layer >= 0; layer--){
-
         nn->delta_states[layer] = cur_deltas;
 
         Matrix* weights = nn->layers[layer]->weights;
-
         Matrix* previous_deltas = mat_multmat(weights, cur_deltas);
-
         cur_deltas = previous_deltas;
     }
 
