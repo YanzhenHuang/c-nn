@@ -132,18 +132,25 @@ void demo_xornn()
     NN *xor_nn = nn_buildNN(2, 2, 1, 0, Sigmoid);
     nn_printNN(xor_nn);
 
-    for (int epoch = 0; epoch < 5; epoch++)
+    int x_1[2] = {0, 1};
+    int x_2[2] = {1, 0};
+
+    for (int epoch = 0; epoch < 9999; epoch++)
     {
         printf("Epoch %d\n", epoch + 1);
-        int x_1 = rand() % 2;
-        int x_2 = rand() % 2;
-        int xor = x_1 ^ x_2;
-
-        Matrix *output = nn_forward(xor_nn, (double[]){x_1, x_2}, 2);
-        Matrix *Yd = mat_create(1, 1, (double[]){xor});
-
-        xor_nn = nn_backward(xor_nn, output, Yd);
+        for (int i = 0; i < 2; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                int xor = x_1[i] ^ x_2[j];
+                Matrix *output = nn_forward(xor_nn, (double[]){x_1[i], x_2[j]}, 2);
+                Matrix *Yd = mat_create(1, 1, (double[]){xor});
+                nn_backward(xor_nn, output, Yd);
+            }
+        }
     }
+
+    double *results = malloc(9999 * sizeof(double));
 
     double tp = 0;
     double tn = 0;
@@ -160,7 +167,9 @@ void demo_xornn()
 
         Matrix *output = nn_forward(xor_nn, (double[]){x_1, x_2}, 2);
         Matrix *Yd = mat_create(1, 1, (double[]){xor});
-        int res = mat_read(output, 0, 0) > 0 ? 1 : 0;
+        int res = mat_read(output, 0, 0) > 0.5 ? 1 : 0;
+
+        results[epoch] = mat_read(output, 0, 0);
 
         if (res == 1 && xor == 1)
         {
@@ -195,6 +204,11 @@ void demo_xornn()
     printf("Rec: %f\n", recall);
     printf("Acc: %f\n", accuracy);
     printf("F1: %f\n", f1);
+
+    for (int i = 0; i < 10; i++)
+    {
+        printf("%d, %f;  ", i, results[i]);
+    }
 }
 
 int main(int argc, char *argv[], char **envp)

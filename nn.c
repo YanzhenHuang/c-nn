@@ -163,6 +163,8 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
     biased_input[input_size] = 1;
 
     Matrix *temp = mat_create(1, input_size + 1, biased_input);
+    free(biased_input);
+
     nn->output_states[0] = temp;
 
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
@@ -195,7 +197,7 @@ NN *nn_backward(NN *nn, Matrix *forward_output, Matrix *target)
         exit(1);
     }
 
-    double lr = 10;
+    double lr = 0.0001;
 
     // Error: Column Vector
     Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
@@ -218,19 +220,19 @@ NN *nn_backward(NN *nn, Matrix *forward_output, Matrix *target)
     // Sequence doesn't matter.
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
     {
-        Matrix *cur_weights = nn->layers[layer]->weights;
+        Matrix *cur_weights = nn->layers[layer]->weights; // Input weights of the current layer.
 
-        Matrix *previous_outputs = nn->output_states[layer];
+        Matrix *previous_outputs = nn->output_states[layer]; // Input of the current layer
 
-        Matrix *cur_outputs = nn->output_states[layer + 1];
+        Matrix *cur_outputs = nn->output_states[layer + 1]; // Output of the current layer
 
-        Matrix *gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false);
+        Matrix *gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false); // Gradient of output
 
-        Matrix *next_deltas = nn->delta_states[layer];
+        Matrix *next_deltas = nn->delta_states[layer]; // Deltas of the next layer
 
-        Matrix *deltas_gradient = mat_pwpmat(next_deltas, gradient);
+        Matrix *deltas_gradient = mat_pwpmat(next_deltas, gradient); // Deltas dot Gradient
 
-        Matrix *_dw = mat_multmat(deltas_gradient, previous_outputs);
+        Matrix *_dw = mat_multmat(deltas_gradient, previous_outputs); // (Deltas dot Gradient) (out_sizex1) x prev_outputs (1xin_size)
 
         Matrix *dw = mat_transpose(mat_multscal(_dw, lr));
 
