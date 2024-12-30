@@ -113,7 +113,7 @@ int demo_xlinalg()
 
 void demo_nn()
 {
-    NN *nn = nn_buildNN(2, 3, 2, 5, Sigmoid);
+    NN *nn = nn_buildNN(2, 3, 2, 5, ReLU);
     nn_printNN(nn);
 
     Matrix *output = nn_forward(nn, (double[]){1, 2}, 2);
@@ -129,15 +129,17 @@ void demo_xornn()
     srand(time(0));
 
     // A simple 2-layered NN to calculate the XOR problem.
-    NN *xor_nn = nn_buildNN(2, 2, 1, 0, Sigmoid);
+    NN *xor_nn = nn_buildNN(2, 2, 1, 1, ReLU);
+
+    printf("Weights before training....\n\n");
     nn_printNN(xor_nn);
 
     int x_1[2] = {0, 1};
     int x_2[2] = {1, 0};
 
-    for (int epoch = 0; epoch < 9999; epoch++)
+    for (int epoch = 0; epoch < 1e5; epoch++)
     {
-        printf("Epoch %d\n", epoch + 1);
+        // printf("Epoch %d\n", epoch + 1);
         for (int i = 0; i < 2; i++)
         {
             for (int j = 0; j < 2; j++)
@@ -149,6 +151,9 @@ void demo_xornn()
             }
         }
     }
+
+    printf("Weights after training....\n\n");
+    nn_printNN(xor_nn);
 
     double *results = malloc(9999 * sizeof(double));
 
@@ -194,8 +199,6 @@ void demo_xornn()
     double accuracy = (tp + tn) / (double)(tp + tn + fp + fn);
     double f1 = (2 * precision * recall) / (double)(precision + recall);
 
-    nn_printNN(xor_nn);
-
     printf("\n~~~ Confusion Matrix ~~~\n");
     printf("TP: %f, TN: %f, FP: %f, FN: %f\n", tp, tn, fp, fn);
 
@@ -205,10 +208,12 @@ void demo_xornn()
     printf("Acc: %f\n", accuracy);
     printf("F1: %f\n", f1);
 
-    for (int i = 0; i < 10; i++)
-    {
-        printf("%d, %f;  ", i, results[i]);
-    }
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     printf("%d, %f;  ", i, results[i]);
+    // }
+
+    free(xor_nn);
 }
 
 int main(int argc, char *argv[], char **envp)

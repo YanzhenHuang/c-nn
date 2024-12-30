@@ -177,6 +177,9 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
         nn->output_states[layer + 1] = product;
         temp = product;
     }
+
+    temp = xmat_traverse(temp, nn->activation, true);
+
     return mat_transpose(temp);
 }
 
