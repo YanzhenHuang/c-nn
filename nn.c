@@ -44,6 +44,29 @@ Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args)
     }
 }
 
+Matrix *CrossEntropyLoss(Matrix *truth, Matrix *pred)
+{
+    if (truth->row != pred->row || truth->col != pred->col)
+    {
+        fprintf(stderr, "Calculate cross entropy failed."
+                        "The shape of two vectors are not the same.");
+    }
+
+    Matrix *loss = xmat_rand(truth->row, truth->col);
+    for (long long i = 0; i < truth->row; i++)
+    {
+        for (long long j = 0; j < truth->col; j++)
+        {
+            double truth_val = mat_read(truth, i, j);
+            double pred_val = mat_read(pred, i, j);
+            double loss_val = -truth_val * log(pred_val) - (1 - truth_val) * log(1 - pred_val);
+            loss = mat_write(loss, i, j, loss_val);
+        }
+    }
+
+    return loss;
+}
+
 Matrix *_layer_init(Matrix *mat, long long row, long long col, va_list args)
 {
     double scale = va_arg(args, double);
@@ -77,7 +100,8 @@ NN *nn_buildNN(
     long long hidden_size,
     long long ouptut_size,
     long long hidden_num,
-    MatrixElementOperation activation)
+    MatrixElementOperation activation,
+    MatrixPointwiseOperation loss)
 {
     NN *nn = malloc(sizeof(NN));
     if (nn == NULL)
@@ -91,6 +115,9 @@ NN *nn_buildNN(
     nn->hidden_num = hidden_num;
     nn->output_states = malloc((nn->hidden_num + 3) * sizeof(Matrix *));
     nn->delta_states = malloc((nn->hidden_num + 3) * sizeof(Matrix *));
+
+    nn->activation = activation;
+    nn->loss = loss;
 
     nn->layers = calloc(hidden_num + 2, sizeof(Layer *));
     if (nn->layers == NULL)
@@ -132,7 +159,6 @@ NN *nn_buildNN(
         return NULL;
     }
     nn->layers[hidden_num + 1] = output_layer;
-    nn->activation = activation;
     return nn;
 }
 
@@ -183,7 +209,7 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
     return mat_transpose(temp);
 }
 
-NN *nn_backward(NN *nn, Matrix *forward_output, Matrix *target)
+NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
 {
     // Target should be in column matrix.
     if (target->col != 1 || forward_output->col != 1)
@@ -203,7 +229,8 @@ NN *nn_backward(NN *nn, Matrix *forward_output, Matrix *target)
     double lr = 0.0001;
 
     // Error: Column Vector
-    Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+    // Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+    Matrix *total_error = nn->loss(target, forward_output);
 
     // Running deltas: Initialized to the deltas of the output layer.
     Matrix *cur_deltas = xmat_traverse(total_error, nn->activation, false);

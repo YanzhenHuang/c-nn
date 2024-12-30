@@ -19,6 +19,7 @@ typedef struct
     Matrix **output_states;
     Matrix **delta_states;
     MatrixElementOperation activation;
+    MatrixPointwiseOperation loss;
 } NN;
 
 /**
@@ -38,6 +39,15 @@ Matrix *ReLU(Matrix *mat, long long i, long long j, va_list args);
 Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args);
 
 /**
+ * @brief Calculate the cross-entropy loss.
+ *
+ * @param truth True labels, ground truth.
+ * @param pred Model predictions.
+ * @return Matrix*
+ */
+Matrix *CrossEntropyLoss(Matrix *truth, Matrix *pred);
+
+/**
  * @brief Build a neural network.
  *
  * @param input_size Input size.
@@ -47,7 +57,12 @@ Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args);
  * @param activation Pointer to the activation function.
  * @return NN*
  */
-NN *nn_buildNN(long long input_size, long long hidden_size, long long output_size, long long hidden_num, MatrixElementOperation activation);
+NN *nn_buildNN(long long input_size,
+               long long hidden_size,
+               long long output_size,
+               long long hidden_num,
+               MatrixElementOperation activation,
+               MatrixPointwiseOperation loss);
 
 /**
  * @brief Print neural network.

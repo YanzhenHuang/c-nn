@@ -20,6 +20,12 @@ typedef struct
 typedef Matrix *(*MatrixElementOperation)(Matrix *, long long, long long, va_list);
 
 /**
+ * @brief Pointwise operation on two matrices.
+ *
+ */
+typedef Matrix *(*MatrixPointwiseOperation)(Matrix *, Matrix *);
+
+/**
  * @brief Traverse a matrix and operate on single element.
  *
  * @param mat Matrix struct pointer.
