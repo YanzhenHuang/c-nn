@@ -258,7 +258,7 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
 
         Matrix *gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false); // Gradient of output
 
-        Matrix *next_deltas = nn->delta_states[layer]; // Deltas of the next layer
+        Matrix *next_deltas = nn->delta_states[layer]; // Deltas of the output
 
         Matrix *deltas_gradient = mat_pwpmat(next_deltas, gradient); // Deltas dot Gradient
 
