@@ -61,7 +61,7 @@ Matrix *mat_transpose(Matrix *matrix);
 /**
  * @brief Matrix addition with scalar.
  *
- * @param mat_1 Matrix struct pointer of the matrix
+ * @param mat Matrix struct pointer of the matrix
  * @param val Scalar value.
  * @return Matrix*
  */
