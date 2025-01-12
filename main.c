@@ -137,7 +137,7 @@ void demo_xornn()
     int x_1[2] = {0, 1};
     int x_2[2] = {1, 0};
 
-    for (int epoch = 0; epoch < 999; epoch++)
+    for (int epoch = 0; epoch < 10; epoch++)
     {
         // printf("Epoch %d\n", epoch + 1);
         for (int i = 0; i < 2; i++)
@@ -198,6 +198,9 @@ void demo_xornn()
     double recall = tp / (double)(tp + fn);
     double accuracy = (tp + tn) / (double)(tp + tn + fp + fn);
     double f1 = (2 * precision * recall) / (double)(precision + recall);
+
+    printf("\n~~~ NN Final output states ~~~\n");
+    mat_print(xor_nn->output_states[2]);
 
     printf("\n~~~ Confusion Matrix ~~~\n");
     printf("TP: %f, TN: %f, FP: %f, FN: %f\n", tp, tn, fp, fn);

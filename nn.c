@@ -186,10 +186,13 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
     {
         biased_input[i] = input[i];
     }
+
     biased_input[input_size] = 1;
 
     Matrix *temp = mat_create(1, input_size + 1, biased_input);
-    free(biased_input);
+
+    printf("Biased Input - temp:\n");
+    mat_print(temp);
 
     nn->output_states[0] = temp;
 
@@ -204,7 +207,7 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
         temp = product;
     }
 
-    temp = xmat_traverse(temp, nn->activation, true);
+    // temp = xmat_traverse(temp, nn->activation, true);
 
     return mat_transpose(temp);
 }
@@ -250,9 +253,10 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
     // Sequence doesn't matter.
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
     {
-        Matrix *cur_weights = nn->layers[layer]->weights; // Input weights of the current layer.
+        Matrix *cur_weights = nn->layers[layer]->weights; // Input weights of the current layer. (input size x output size)
 
-        Matrix *previous_outputs = nn->output_states[layer]; // Input of the current layer
+        Matrix *previous_outputs = nn->output_states[layer]; // Input of the current layer. 
+        // mat_print(previous_outputs);
 
         Matrix *cur_outputs = nn->output_states[layer + 1]; // Output of the current layer
 
