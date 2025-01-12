@@ -110,12 +110,16 @@ NN *nn_buildNN(
         return NULL;
     }
 
+    // Architecture of neural-network.
     nn->input_size = input_size;
     nn->hidden_size = hidden_size;
     nn->hidden_num = hidden_num;
+
+    // Dynamic states during back propagation.
     nn->output_states = malloc((nn->hidden_num + 3) * sizeof(Matrix *));
     nn->delta_states = malloc((nn->hidden_num + 3) * sizeof(Matrix *));
 
+    // Activation and loss function.
     nn->activation = activation;
     nn->loss = loss;
 
