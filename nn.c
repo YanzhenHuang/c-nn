@@ -195,9 +195,6 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
 
     Matrix *temp = mat_create(1, input_size + 1, biased_input);
 
-    printf("Biased Input - temp:\n");
-    mat_print(temp);
-
     nn->output_states[0] = temp;
 
     for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
@@ -210,8 +207,6 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
         nn->output_states[layer + 1] = product;
         temp = product;
     }
-
-    // temp = xmat_traverse(temp, nn->activation, true);
 
     return mat_transpose(temp);
 }
@@ -233,11 +228,11 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
         exit(1);
     }
 
-    double lr = 0.0001;
+    double lr = 0.01;
 
     // Error: Column Vector
-    // Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
-    Matrix *total_error = nn->loss(target, forward_output);
+    Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+    // Matrix *total_error = nn->loss(target, forward_output);
 
     // Running deltas: Initialized to the deltas of the output layer.
     Matrix *cur_deltas = xmat_traverse(total_error, nn->activation, false);
