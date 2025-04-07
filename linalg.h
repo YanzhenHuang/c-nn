@@ -23,6 +23,14 @@ typedef struct
 Matrix *mat_create(long long row, long long col, double *data);
 
 /**
+ * @brief Copy an existing matrix to a new address.
+ *
+ * @param matrix
+ * @return Matrix*
+ */
+Matrix *mat_copy(Matrix *matrix);
+
+/**
  * @brief Read a matrix value.
  *
  * @param matrix Matrix struct pointer.
@@ -41,7 +49,7 @@ double mat_read(Matrix *matrix, long long i, long long j);
  * @param val The intended value to be written.
  * @return Matrix*
  */
-Matrix *mat_write(Matrix *matrix, long long i, long long j, double val);
+void mat_write(Matrix *matrix, long long i, long long j, double val);
 
 /**
  * @brief Print the matrix in the console.

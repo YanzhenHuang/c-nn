@@ -22,16 +22,17 @@ Matrix *xmat_traverse(Matrix *mat, MatrixElementOperation operation, ...)
 {
     va_list args;
     va_start(args, operation);
-    for (long long i = 0; i < mat->row; i++)
+    Matrix *new_mat = mat_copy(mat);
+    for (long long i = 0; i < new_mat->row; i++)
     {
-        for (long long j = 0; j < mat->col; j++)
+        for (long long j = 0; j < new_mat->col; j++)
         {
-            mat = operation(mat, i, j, args);
+            new_mat = operation(new_mat, i, j, args);
         }
     }
 
     va_end(args);
-    return mat;
+    return new_mat;
 }
 
 Matrix *_set_diagonal(Matrix *mat, long long i, long long j, va_list args)
@@ -47,7 +48,7 @@ Matrix *_set_diagonal(Matrix *mat, long long i, long long j, va_list args)
 Matrix *_set_random(Matrix *mat, long long i, long long j, va_list args)
 {
     double val = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
-    mat = mat_write(mat, i, j, val);
+    mat_write(mat, i, j, val);
     return mat;
 }
 
@@ -91,7 +92,7 @@ Matrix *xmat_submat(Matrix *mat, long long i_st, long long i_ed, long long j_st,
         for (long long j = j_st; j < j_ed; j++)
         {
             double this_val = mat_read(mat, i, j);
-            submat = mat_write(submat, i - i_st, j - j_st, this_val);
+            mat_write(submat, i - i_st, j - j_st, this_val);
         }
     }
 
@@ -300,7 +301,7 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
             {
                 double this_val = mat_read(hybrid_mat, ib, ibj);
                 double new_val = this_val - mult_factor * mat_read(hybrid_mat, i, ibj);
-                hybrid_mat = mat_write(hybrid_mat, ib, ibj, new_val);
+                mat_write(hybrid_mat, ib, ibj, new_val);
             }
         }
     }
@@ -330,7 +331,7 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
             {
                 double this_val = mat_read(hybrid_mat, ia, iaj);
                 double new_val = this_val - mult_factor * mat_read(hybrid_mat, i, iaj);
-                hybrid_mat = mat_write(hybrid_mat, ia, iaj, new_val);
+                mat_write(hybrid_mat, ia, iaj, new_val);
             }
         }
     }
@@ -343,7 +344,7 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
         {
             double this_val = mat_read(hybrid_mat, i, j);
             double new_val = this_val / pivot;
-            hybrid_mat = mat_write(hybrid_mat, i, j, new_val);
+            mat_write(hybrid_mat, i, j, new_val);
         }
     }
 

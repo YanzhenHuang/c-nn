@@ -113,7 +113,7 @@ int demo_xlinalg()
 
 void demo_nn()
 {
-    NN *nn = nn_buildNN(2, 3, 2, 5, ReLU);
+    NN *nn = nn_buildNN(2, 3, 2, 1, ReLU);
     nn_printNN(nn);
 
     Matrix *output = nn_forward(nn, (double[]){1, 2}, 2);

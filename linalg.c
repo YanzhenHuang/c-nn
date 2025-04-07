@@ -30,6 +30,12 @@ Matrix *mat_create(long long row, long long col, double *data)
     return matrix;
 }
 
+Matrix *mat_copy(Matrix *matrix)
+{
+    Matrix *newMatrix = mat_create(matrix->row, matrix->col, matrix->data);
+    return newMatrix;
+}
+
 double mat_read(Matrix *matrix, long long i, long long j)
 {
     if (i < 0 || j < 0 || i >= matrix->row || j >= matrix->col)
@@ -40,7 +46,7 @@ double mat_read(Matrix *matrix, long long i, long long j)
     return matrix->data[i * matrix->col + j];
 }
 
-Matrix *mat_write(Matrix *matrix, long long i, long long j, double val)
+void mat_write(Matrix *matrix, long long i, long long j, double val)
 {
     if (i < 0 || j < 0 || i >= matrix->row || j >= matrix->col)
     {
@@ -48,7 +54,7 @@ Matrix *mat_write(Matrix *matrix, long long i, long long j, double val)
         exit(1);
     }
     matrix->data[i * matrix->col + j] = val;
-    return matrix;
+    // return matrix;
 }
 
 void mat_print(Matrix *matrix)
@@ -89,7 +95,7 @@ Matrix *mat_transpose(Matrix *matrix)
     {
         for (long long j = 0; j < matrix->col; j++)
         {
-            transposed = mat_write(transposed, j, i, mat_read(matrix, i, j));
+            mat_write(transposed, j, i, mat_read(matrix, i, j));
         }
     }
 
@@ -104,7 +110,7 @@ Matrix *mat_addscal(Matrix *mat, double val)
     {
         for (long long j = 0; j < mat->col; j++)
         {
-            added = mat_write(added, i, j, mat_read(mat, i, j) + val);
+            mat_write(added, i, j, mat_read(mat, i, j) + val);
         }
     }
     return added;
@@ -118,7 +124,7 @@ Matrix *mat_multscal(Matrix *mat, double val)
     {
         for (long long j = 0; j < mat->col; j++)
         {
-            multiplied = mat_write(multiplied, i, j, mat_read(mat, i, j) * val);
+            mat_write(multiplied, i, j, mat_read(mat, i, j) * val);
         }
     }
     return multiplied;
@@ -140,7 +146,7 @@ Matrix *mat_addmat(Matrix *mat_1, Matrix *mat_2)
         for (long long j = 0; j < added->col; j++)
         {
             double added_val = mat_read(mat_1, i, j) + mat_read(mat_2, i, j);
-            added = mat_write(added, i, j, added_val);
+            mat_write(added, i, j, added_val);
         }
     }
 
@@ -156,9 +162,9 @@ Matrix *mat_pwpmat(Matrix *mat_1, Matrix *mat_2)
 {
     if (mat_1->row != mat_2->row || mat_1->col != mat_2->col)
     {
-        printf("Cannot point-wise product matrix with different size.\n"
-               "mat have size %lld x %lld while val have size %lld x %lld.",
-               mat_1->row, mat_1->col, mat_2->row, mat_2->col);
+        fprintf(stderr, "Cannot point-wise product matrix with different size.\n"
+                        "mat have size %lld x %lld while val have size %lld x %lld.",
+                mat_1->row, mat_1->col, mat_2->row, mat_2->col);
         exit(1);
     }
 
@@ -170,7 +176,7 @@ Matrix *mat_pwpmat(Matrix *mat_1, Matrix *mat_2)
         for (long long j = 0; j < mat_1->col; j++)
         {
             double product = mat_read(mat_1, i, j) * mat_read(mat_2, i, j);
-            produced = mat_write(produced, i, j, product);
+            mat_write(produced, i, j, product);
         }
     }
     return produced;
@@ -200,7 +206,7 @@ Matrix *mat_multmat(Matrix *mat_l, Matrix *mat_r)
             {
                 lin_comb += mat_read(mat_l, i, k) * mat_read(mat_r, k, j);
             }
-            multiplied = mat_write(multiplied, i, j, lin_comb);
+            mat_write(multiplied, i, j, lin_comb);
         }
     }
 
