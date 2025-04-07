@@ -44,7 +44,7 @@ Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args)
     }
 }
 
-Matrix *CrossEntropyLoss(Matrix *truth, Matrix *pred)
+double CrossEntropyLoss(Matrix *truth, Matrix *pred)
 {
     if (truth->row != pred->row || truth->col != pred->col)
     {
@@ -52,19 +52,39 @@ Matrix *CrossEntropyLoss(Matrix *truth, Matrix *pred)
                         "The shape of two vectors are not the same.");
     }
 
-    Matrix *loss = xmat_rand(truth->row, truth->col);
+    // Matrix *loss = xmat_rand(truth->row, truth->col);
+    double loss = 0;
     for (long long i = 0; i < truth->row; i++)
     {
         for (long long j = 0; j < truth->col; j++)
         {
             double truth_val = mat_read(truth, i, j);
             double pred_val = mat_read(pred, i, j);
-            double loss_val = -truth_val * log(pred_val) - (1 - truth_val) * log(1 - pred_val);
-            loss = mat_write(loss, i, j, loss_val);
+            loss += -truth_val * log(pred_val) - (1 - truth_val) * log(1 - pred_val);
         }
     }
 
     return loss;
+}
+
+Matrix *softMax(Matrix *vec)
+{
+    if (vec->row != 1 && vec->col != 1)
+    {
+        fprintf(stderr, "Unable to softmax non-vector matrix.");
+    }
+
+    double sum = mat_elemSum(vec);
+
+    for (long long i = 0; i < vec->row; i++)
+    {
+        for (long long j = 0; j < vec->col; j++)
+        {
+            mat_write(vec, i, j, exp(mat_read(vec, i, j)) / sum);
+        }
+    }
+
+    return vec;
 }
 
 Matrix *_layer_init(Matrix *mat, long long row, long long col, va_list args)
@@ -100,8 +120,7 @@ NN *nn_buildNN(
     long long hidden_size,
     long long ouptut_size,
     long long hidden_num,
-    MatrixElementOperation activation,
-    MatrixPointwiseOperation loss)
+    MatrixElementOperation activation)
 {
     NN *nn = malloc(sizeof(NN));
     if (nn == NULL)
@@ -121,7 +140,7 @@ NN *nn_buildNN(
 
     // Activation and loss function.
     nn->activation = activation;
-    nn->loss = loss;
+    // nn->loss = loss;
 
     nn->layers = calloc(hidden_num + 2, sizeof(Layer *));
     if (nn->layers == NULL)
@@ -217,7 +236,7 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
     if (target->col != 1 || forward_output->col != 1)
     {
         fprintf(stderr, "Backward propagation failed: "
-                        " Target and forward output should be a column matrix.");
+                        "Target and forward output should be a column matrix.");
         exit(1);
     }
     // Shape should match
@@ -228,51 +247,65 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
         exit(1);
     }
 
+    // Learning rate
     double lr = 0.01;
 
-    // Error: Column Vector
-    Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
-    // Matrix *total_error = nn->loss(target, forward_output);
+    // delta-loss/delta-y
+    Matrix *softmaxed_output = softMax(forward_output);
+    Matrix *dLdy = mat_difmat(softmaxed_output, target);
 
-    // Running deltas: Initialized to the deltas of the output layer.
-    Matrix *cur_deltas = xmat_traverse(total_error, nn->activation, false);
+    // Matrix *dLdz =
 
-    // From the back most layer to the first layer.
-    // Propagate delta.
+    // delta-y/delta-w
+    Matrix *dydW = mat_transpose(nn->output_states[nn->hidden_num]); // (hidden_num + 2) - 1 - 1
+    Matrix *dLdW = mat_multmat(dydW, mat_transpose(dLdy));
+    nn->layers[nn->hidden_num + 1]->weights = mat_addmat(nn->layers[nn->hidden_num + 1]->weights, mat_multscal(dLdW, -lr));
+
     for (long long layer = nn->hidden_num + 1; layer >= 0; layer--)
     {
-        nn->delta_states[layer] = cur_deltas;
-
-        Matrix *weights = nn->layers[layer]->weights;
-        Matrix *previous_deltas = mat_multmat(weights, cur_deltas);
-        cur_deltas = previous_deltas;
-    }
-
-    // Forward update the weights.
-    // Sequence doesn't matter.
-    for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
-    {
-        Matrix *cur_weights = nn->layers[layer]->weights; // Input weights of the current layer. (input size x output size)
-
-        Matrix *previous_outputs = nn->output_states[layer]; // Input of the current layer. 
-        // mat_print(previous_outputs);
-
-        Matrix *cur_outputs = nn->output_states[layer + 1]; // Output of the current layer
-
-        Matrix *gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false); // Gradient of output
-
-        Matrix *next_deltas = nn->delta_states[layer]; // Deltas of the output
-
-        Matrix *deltas_gradient = mat_pwpmat(next_deltas, gradient); // Deltas dot Gradient
-
-        Matrix *_dw = mat_multmat(deltas_gradient, previous_outputs); // (Deltas dot Gradient) (out_sizex1) x prev_outputs (1xin_size)
-
-        Matrix *dw = mat_transpose(mat_multscal(_dw, lr));
-
-        nn->layers[layer]->weights = mat_addmat(nn->layers[layer]->weights, dw);
     }
 
     return nn;
+
+    // // Total loss: Column Vector
+    // Matrix *total_error = mat_addmat(target, mat_multscal(forward_output, -1));
+    // // Matrix *total_error = nn->loss(target, forward_output);
+
+    // // Running deltas: delta-loss/delta-y. Initialized to the deltas of the output layer.
+    // Matrix *cur_deltas = xmat_traverse(total_error, nn->activation, false);
+    // for (long long layer = nn->hidden_num + 1; layer >= 0; layer--)
+    // {
+    //     nn->delta_states[layer] = cur_deltas;
+    //     Matrix *weights = nn->layers[layer]->weights;
+    //     Matrix *previous_deltas = mat_multmat(weights, cur_deltas);
+    //     cur_deltas = previous_deltas;
+    // }
+
+    // // Forward update the weights.
+    // // Sequence doesn't matter.
+    // for (long long layer = 0; layer < nn->hidden_num + 2; layer++)
+    // {
+    //     Matrix *cur_weights = nn->layers[layer]->weights; // Input weights of the current layer. (input size x output size)
+
+    //     Matrix *previous_outputs = nn->output_states[layer]; // Input of the current layer.
+    //     // mat_print(previous_outputs);
+
+    //     Matrix *cur_outputs = nn->output_states[layer + 1]; // Output of the current layer
+
+    //     Matrix *gradient = xmat_traverse(mat_transpose(cur_outputs), nn->activation, false); // Gradient of output: delta-loss/delta-y
+
+    //     Matrix *next_deltas = nn->delta_states[layer]; // Deltas of the output
+
+    //     Matrix *deltas_gradient = mat_pwpmat(next_deltas, gradient); // Deltas dot Gradient
+
+    //     Matrix *_dw = mat_multmat(deltas_gradient, previous_outputs); // (Deltas dot Gradient) (out_sizex1) x prev_outputs (1xin_size)
+
+    //     Matrix *dw = mat_transpose(mat_multscal(_dw, lr));
+
+    //     nn->layers[layer]->weights = mat_addmat(nn->layers[layer]->weights, dw);
+    // }
+
+    // return nn;
 }
 
 // Copy this for debug.

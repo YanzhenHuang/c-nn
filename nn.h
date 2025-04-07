@@ -43,9 +43,17 @@ Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args);
  *
  * @param truth True labels, ground truth.
  * @param pred Model predictions.
+ * @return double
+ */
+double CrossEntropyLoss(Matrix *truth, Matrix *pred);
+
+/**
+ * @brief Calculate a softmaxed version of a vector.
+ *
+ * @param vec Vector to be softmaxed.
  * @return Matrix*
  */
-Matrix *CrossEntropyLoss(Matrix *truth, Matrix *pred);
+Matrix *softMax(Matrix *vec);
 
 /**
  * @brief Build a neural network.
@@ -61,8 +69,7 @@ NN *nn_buildNN(long long input_size,
                long long hidden_size,
                long long output_size,
                long long hidden_num,
-               MatrixElementOperation activation,
-               MatrixPointwiseOperation loss);
+               MatrixElementOperation activation);
 
 /**
  * @brief Print neural network.

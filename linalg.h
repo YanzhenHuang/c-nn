@@ -51,6 +51,14 @@ Matrix *mat_write(Matrix *matrix, long long i, long long j, double val);
 void mat_print(Matrix *matrix);
 
 /**
+ * @brief Element sum of a matrix.
+ *
+ * @param matrix Matrix struct pointer.
+ * @return double
+ */
+double mat_elemSum(Matrix *matrix);
+
+/**
  * @brief Transpose a matrix.
  *
  * @param matrix Matrix struct pointer.
@@ -84,6 +92,15 @@ Matrix *mat_multscal(Matrix *mat, double val);
  * @return Matrix*
  */
 Matrix *mat_addmat(Matrix *mat_1, Matrix *mat_2);
+
+/**
+ * @brief Matrix subtraction.
+ *
+ * @param mat_1 Matrix struct pointer of the first matrix.
+ * @param mat_2 Matrix struct pointer of the first matrix.
+ * @return Matrix*
+ */
+Matrix *mat_difmat(Matrix *mat_1, Matrix *mat_2);
 
 /**
  * @brief Point-wise production of two matrices.

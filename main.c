@@ -113,7 +113,7 @@ int demo_xlinalg()
 
 void demo_nn()
 {
-    NN *nn = nn_buildNN(2, 3, 2, 5, ReLU, CrossEntropyLoss);
+    NN *nn = nn_buildNN(2, 3, 2, 5, ReLU);
     nn_printNN(nn);
 
     Matrix *output = nn_forward(nn, (double[]){1, 2}, 2);
@@ -129,7 +129,7 @@ void demo_xornn()
     srand(time(0));
 
     // A simple 2-layered NN to calculate the XOR problem.
-    NN *xor_nn = nn_buildNN(2, 2, 1, 1, ReLU, CrossEntropyLoss);
+    NN *xor_nn = nn_buildNN(2, 2, 1, 1, ReLU);
 
     printf("Weights before training....\n\n");
     nn_printNN(xor_nn);
