@@ -74,13 +74,15 @@ Matrix *xmat_submat(Matrix *mat, long long i_st, long long i_ed, long long j_st,
 {
     if (i_st > i_ed || j_st > j_ed)
     {
-        printf("Acquire sub-matrix failed: Invalid requirement."
-               "Starting point shoud always start earlier than ending point.");
+        fprintf(stderr,
+                "Acquire sub-matrix failed: Invalid requirement."
+                "Starting point shoud always start earlier than ending point.");
         exit(1);
     }
     if (i_st < 0 || i_ed - 1 >= mat->row || j_st < 0 || j_ed - 1 >= mat->col)
     {
-        printf("Acquire sub-matrix failed: Matrix index outof bounds.");
+        fprintf(stderr,
+                "Acquire sub-matrix failed: Matrix index outof bounds.");
         exit(1);
     }
 
@@ -103,8 +105,10 @@ Matrix *xmat_hstack(Matrix *mat_l, Matrix *mat_r)
 {
     if (mat_l->row != mat_r->row)
     {
-        printf("Hstack failed: Invalid matrix size. mal_l: %lld x %lld, mat_r: %lld x %lld.",
-               mat_l->row, mat_l->col, mat_r->row, mat_r->col);
+        fprintf(stderr,
+                "Hstack failed: Invalid matrix size. "
+                "mal_l: %lld x %lld, mat_r: %lld x %lld.",
+                mat_l->row, mat_l->col, mat_r->row, mat_r->col);
         exit(1);
     }
 
@@ -157,8 +161,10 @@ Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d)
 {
     if (mat_u->col != mat_d->col)
     {
-        printf("Vstack failed: Invalid matrix size. mat_u: %lld x %lld, mat_d: %lld x %lld.",
-               mat_u->row, mat_u->col, mat_d->row, mat_d->col);
+        fprintf(stderr,
+                "Vstack failed: Invalid matrix size. "
+                "mat_u: %lld x %lld, mat_d: %lld x %lld.",
+                mat_u->row, mat_u->col, mat_d->row, mat_d->col);
         exit(1);
     }
 
@@ -211,7 +217,8 @@ double xmat_det(Matrix *mat)
 {
     if (mat->row != mat->col)
     {
-        printf("Calculate determinant failed: Calculate matrix determinant failed: Matrix is not square.");
+        fprintf(stderr,
+                "Calculate determinant failed: Matrix is not square.");
         exit(1);
     }
 
@@ -263,7 +270,7 @@ Matrix *xmat_readrow(Matrix *mat, long long i)
 {
     if (i < 0 || i >= mat->row)
     {
-        printf("Read row failed: Matrix index outof bounds.");
+        fprintf(stderr, "Read row failed: Matrix index outof bounds.");
         exit(1);
     }
 
@@ -279,7 +286,7 @@ Matrix *xmat_readcol(Matrix *mat, long long j)
 {
     if ((j < 0 && j != -1) || j >= mat->col)
     {
-        printf("Read column failed: Matrix index outof bounds.");
+        fprintf(stderr, "Read column failed: Matrix index outof bounds.");
         exit(1);
     }
 
@@ -295,21 +302,24 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
 {
     if (A->col != b->row)
     {
-        printf("Solve equation failed: Unable to solve incompatible matrices. \n"
-               "A: %lld x %lld, b: %lld x %lld\n",
-               A->row, A->col, b->row, b->col);
+        fprintf(stderr,
+                "Solve equation failed: Unable to solve incompatible matrices. \n"
+                "A: %lld x %lld, b: %lld x %lld\n",
+                A->row, A->col, b->row, b->col);
         exit(1);
     }
 
     if (A->col < b->row)
     {
-        printf("Solve equation failed: No solution exists.");
+        fprintf(stderr,
+                "Solve equation failed: No solution exists.");
         exit(1);
     }
 
     if (A->col > b->row)
     {
-        printf("Solve equation failed: Multiple solutions.");
+        fprintf(stderr,
+                "Solve equation failed: Multiple solutions.");
         exit(1);
     }
 
@@ -323,9 +333,10 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
         double pivot = mat_read(hybrid_mat, i, i);
         if (pivot == 0)
         {
-            printf("Solve equation failed: Pivot element is zero at"
-                   " row %lld during forward elimination.",
-                   i);
+            fprintf(stderr,
+                    "Solve equation failed: Pivot element is zero at"
+                    " row %lld during forward elimination.",
+                    i);
             exit(1);
         }
 
@@ -353,9 +364,10 @@ Matrix *xmat_solve(Matrix *A, Matrix *b)
         double pivot = mat_read(hybrid_mat, i, i);
         if (pivot == 0)
         {
-            printf("Solve equation failed: Pivot element is zero at"
-                   " row %lld during backward substitution.",
-                   i);
+            fprintf(stderr,
+                    "Solve equation failed: Pivot element is zero at"
+                    " row %lld during backward substitution.",
+                    i);
             exit(1);
         }
 
@@ -399,7 +411,7 @@ Matrix *xmat_inv(Matrix *mat)
 {
     if (mat->row != mat->col)
     {
-        printf("Inverse matrix failed: Matrix is not square.");
+        fprintf(stderr, "Inverse matrix failed: Matrix is not square.");
         exit(1);
     }
 
