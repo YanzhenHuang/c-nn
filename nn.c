@@ -267,6 +267,7 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output, double lr)
     if (lr <= 0)
     {
         fprintf(stderr, "Backward propagation failed: Invalid learning rate of %lf", lr);
+        exit(1);
     }
 
     // dL/dy of cross-entropy loss.
@@ -280,7 +281,9 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output, double lr)
         Matrix *dLdzT = mat_transpose(dLdz);                      // Err: (row=1, col=output_size)
         Matrix *dLdW = mat_multmat(xT, dLdzT);                    // Grad: (row=input_size, col=outpu_size)
 
-        nn->layers[layer]->weights = mat_difmat(nn->layers[layer]->weights, mat_multscal(dLdW, lr));
+        nn->layers[layer]->weights = mat_difmat(
+            nn->layers[layer]->weights,
+            mat_multscal(dLdW, lr)); // W_{t+1} = W_{t} - eps * (dL/dW)
 
         if (layer > 1)
         {
