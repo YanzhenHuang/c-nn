@@ -418,6 +418,16 @@ bool xmat_isEqual(Matrix *mat_1, Matrix *mat_2)
     return memcmp(mat_1->data, mat_2->data, mat_1->row * mat_1->col * sizeof(double)) == 0;
 }
 
+bool xmat_isRow(Matrix *matrix)
+{
+    return matrix->row == 1;
+}
+
+bool xmat_isCol(Matrix *matrix)
+{
+    return matrix->col == 1;
+}
+
 bool xmat_isSquare(Matrix *mat)
 {
     return mat->row == mat->col;

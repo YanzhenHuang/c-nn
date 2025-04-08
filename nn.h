@@ -39,13 +39,13 @@ Matrix *ReLU(Matrix *mat, long long i, long long j, va_list args);
 Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args);
 
 /**
- * @brief Calculate the cross-entropy loss.
+ * @brief Calculate the gradient of cross-entropy loss.
  *
  * @param truth True labels, ground truth.
  * @param pred Model predictions.
  * @return double
  */
-double CrossEntropyLoss(Matrix *truth, Matrix *pred);
+Matrix *nngrad_CELoss(Matrix *truth, Matrix *pred);
 
 /**
  * @brief Calculate a softmaxed version of a vector.
@@ -69,7 +69,8 @@ NN *nn_buildNN(long long input_size,
                long long hidden_size,
                long long output_size,
                long long hidden_num,
-               MatrixElementOperation activation);
+               MatrixElementOperation activation,
+               MatrixPointwiseOperation loss);
 
 /**
  * @brief Print neural network.

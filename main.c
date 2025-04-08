@@ -113,7 +113,7 @@ int demo_xlinalg()
 
 void demo_nn()
 {
-    NN *nn = nn_buildNN(2, 3, 2, 1, ReLU);
+    NN *nn = nn_buildNN(2, 3, 2, 1, ReLU, nngrad_CELoss);
     printf("Initial weights.\n");
     nn_printNN(nn);
 
@@ -132,7 +132,7 @@ void demo_xornn()
     srand(time(0));
 
     // A simple 2-layered NN to calculate the XOR problem.
-    NN *xor_nn = nn_buildNN(2, 2, 1, 1, ReLU);
+    NN *xor_nn = nn_buildNN(2, 2, 1, 1, ReLU, nngrad_CELoss);
 
     printf("Weights before training....\n\n");
     nn_printNN(xor_nn);

@@ -51,27 +51,25 @@ Matrix *Sigmoid(Matrix *mat, long long i, long long j, va_list args)
     return mat;
 }
 
-double CrossEntropyLoss(Matrix *truth, Matrix *pred)
+Matrix *nngrad_CELoss(Matrix *truth, Matrix *pred)
 {
+    if (!xmat_isCol(truth) || !xmat_isCol(pred))
+    {
+        fprintf(stderr, "Calculate cross entropy failed."
+                        "Both truth and prediction should be column vectors.");
+        exit(1);
+    }
     if (truth->row != pred->row || truth->col != pred->col)
     {
         fprintf(stderr, "Calculate cross entropy failed."
                         "The shape of two vectors are not the same.");
+        exit(1);
     }
 
-    // Matrix *loss = xmat_rand(truth->row, truth->col);
-    double loss = 0;
-    for (long long i = 0; i < truth->row; i++)
-    {
-        for (long long j = 0; j < truth->col; j++)
-        {
-            double truth_val = mat_read(truth, i, j);
-            double pred_val = mat_read(pred, i, j);
-            loss += -truth_val * log(pred_val) - (1 - truth_val) * log(1 - pred_val);
-        }
-    }
+    Matrix *softmaxed_pred = softMax(pred);
+    Matrix *dLdy = mat_difmat(softmaxed_pred, truth);
 
-    return loss;
+    return dLdy;
 }
 
 Matrix *softMax(Matrix *vec)
@@ -128,7 +126,8 @@ NN *nn_buildNN(
     long long hidden_size,
     long long ouptut_size,
     long long hidden_num,
-    MatrixElementOperation activation)
+    MatrixElementOperation activation,
+    MatrixPointwiseOperation loss)
 {
     NN *nn = malloc(sizeof(NN));
     if (nn == NULL)
@@ -148,7 +147,7 @@ NN *nn_buildNN(
 
     // Activation and loss function.
     nn->activation = activation;
-    // nn->loss = loss;
+    nn->loss = loss;
 
     nn->layers = calloc(hidden_num + 2, sizeof(Layer *));
     if (nn->layers == NULL)
@@ -270,10 +269,9 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output, double lr)
         exit(1);
     }
 
-    // dL/dy of cross-entropy loss.
-    Matrix *softmaxed_output = softMax(forward_output);
-    Matrix *dLdy = mat_difmat(softmaxed_output, target); // Total error.
-    Matrix *dLdz = mat_copy(dLdy);                       // Running error. Shape: (row=output_size, col=1)
+    // Total error gradient.
+    Matrix *dLdy = nn->loss(target, forward_output); // Total error.
+    Matrix *dLdz = mat_copy(dLdy);                   // Running error. Shape: (row=output_size, col=1)
 
     for (long long layer = nn->hidden_num + 1; layer > 0; layer--)
     {

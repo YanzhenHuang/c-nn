@@ -158,6 +158,22 @@ Matrix *xmat_inv(Matrix *mat);
 bool xmat_isEqual(Matrix *mat_1, Matrix *mat_2);
 
 /**
+ * @brief Identify if a matrix is a row matrix.
+ *
+ * @param matrix Matrix struct pointer.
+ * @return int*
+ */
+bool xmat_isRow(Matrix *matrix);
+
+/**
+ * @brief Identify if a matrix is a column matrix.
+ *
+ * @param matrix Matrix struct pointer.
+ * @return int*
+ */
+bool xmat_isCol(Matrix *matrix);
+
+/**
  * @brief Identify if a matrix is a square matrix.
  *
  * @param mat Matrix struct pointer.
