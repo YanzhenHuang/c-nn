@@ -114,13 +114,16 @@ int demo_xlinalg()
 void demo_nn()
 {
     NN *nn = nn_buildNN(2, 3, 2, 1, ReLU);
+    printf("Initial weights.\n");
     nn_printNN(nn);
 
     Matrix *output = nn_forward(nn, (double[]){1, 2}, 2);
+    printf("Output of forward.\n");
     mat_print(output);
 
     Matrix *Yd = mat_create(2, 1, (double[]){2, 1});
-    nn = nn_backward(nn, output, Yd);
+    nn = nn_backward(nn, output, Yd, 1e-2);
+    printf("Trained weights.\n");
     nn_printNN(nn);
 }
 
@@ -147,7 +150,7 @@ void demo_xornn()
                 int xor = x_1[i] ^ x_2[j];
                 Matrix *output = nn_forward(xor_nn, (double[]){x_1[i], x_2[j]}, 2);
                 Matrix *Yd = mat_create(1, 1, (double[]){xor});
-                nn_backward(xor_nn, Yd, output);
+                nn_backward(xor_nn, Yd, output, 1e-2);
             }
         }
     }
@@ -163,7 +166,7 @@ void demo_xornn()
     double fn = 0;
 
     printf("\nEvaluating Samples...\n\n");
-    for (int epoch = 0; epoch < 9999; epoch++)
+    for (int epoch = 0; epoch < 5; epoch++)
     {
         // printf("Sample %d\n", epoch+1);
         int x_1 = rand() % 2;

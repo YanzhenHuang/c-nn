@@ -204,7 +204,7 @@ void nn_printNN(NN *nn)
             fprintf(stderr, "Print NN failed: Can't print weights.");
             return;
         }
-        printf("Layer %lld at %p:\n", k, weights);
+        printf("Layer %lld at %p: (%lld -> %lld)\n", k, weights, weights->row, weights->col);
         mat_print(weights);
         printf("\n");
     }
@@ -245,7 +245,7 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size)
     return mat_transpose(biased_input);
 }
 
-NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
+NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output, double lr)
 {
     // Target should be in column matrix.
     if (target->col != 1 || forward_output->col != 1)
@@ -254,6 +254,7 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
                         "Target and forward output should be a column matrix.");
         exit(1);
     }
+
     // Shape should match
     if (forward_output->row != target->row)
     {
@@ -262,77 +263,31 @@ NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output)
         exit(1);
     }
 
-    // Learning rate
-    double lr = 0.01;
-
-    // dL/dy
-    Matrix *softmaxed_output = softMax(forward_output);
-    Matrix *dLdy = mat_difmat(softmaxed_output, target);
-
-    // Matrix *dLdz = mat_copy(dLdy);
-
-    // // delta-y/delta-w
-    // Matrix *dydW = mat_transpose(nn->output_states[nn->hidden_num]); // (hidden_num + 2) - 1 - 1
-    // Matrix *dLdW = mat_multmat(dydW, mat_transpose(dLdy));
-    // nn->layers[nn->hidden_num + 1]->weights = mat_addmat(nn->layers[nn->hidden_num + 1]->weights, mat_multscal(dLdW, -lr));
-    Matrix *dLdz = mat_copy(dLdy);
-
-    for (long long layer = nn->hidden_num + 1; layer >= 0; layer--)
+    // Learning rate should be valid.
+    if (lr <= 0)
     {
-        printf("Trying to run back-propagation at layer %lld\n", layer);
-        printf("Defining this layer's dL/dz\n");
-        // dL/dz
-        if (layer == nn->hidden_num + 1)
+        fprintf(stderr, "Backward propagation failed: Invalid learning rate of %lf", lr);
+    }
+
+    // dL/dy of cross-entropy loss.
+    Matrix *softmaxed_output = softMax(forward_output);
+    Matrix *dLdy = mat_difmat(softmaxed_output, target); // Total error.
+    Matrix *dLdz = mat_copy(dLdy);                       // Running error. Shape: (row=output_size, col=1)
+
+    for (long long layer = nn->hidden_num + 1; layer > 0; layer--)
+    {
+        Matrix *xT = mat_transpose(nn->output_states[layer - 1]); // Input: (row=input_size, col=1)
+        Matrix *dLdzT = mat_transpose(dLdz);                      // Err: (row=1, col=output_size)
+        Matrix *dLdW = mat_multmat(xT, dLdzT);                    // Grad: (row=input_size, col=outpu_size)
+
+        nn->layers[layer]->weights = mat_difmat(nn->layers[layer]->weights, mat_multscal(dLdW, lr));
+
+        if (layer > 1)
         {
-            // last layer
-            dLdz = mat_copy(dLdy);
+            dLdz = mat_multmat(nn->layers[layer]->weights, dLdz); // (row=input_size, col=1)
+            dLdz = xmat_traverse(dLdz, nn->activation, false);    // Activation derivative
         }
-        else
-        {
-            Matrix *dadx = xmat_traverse(
-                nn->output_states[layer + 1],
-                nn->activation, false); // Activation derivative
-
-            dLdz = mat_multmat(dLdz, dadx);
-        }
-        mat_print(dLdz);
-
-        // dz/dW
-        // printf("Output state of layer %lld:\n", layer);
-        // mat_print(nn->output_states[layer]);
-        Matrix *dzdW = mat_transpose(nn->output_states[layer - 1]); // Inputs of this layer, outputs of the previous layer
-        printf("dz/dW\n");
-        mat_print(dzdW);
-
-        // dL/dw
-        Matrix *dLdW = mat_multmat(dzdW, mat_transpose(dLdz));
-        printf("dL/dW\n");
-        mat_print(dLdW);
-
-        // Weight update (with bias)
-        nn->layers[layer]->weights = mat_addmat(nn->layers[layer]->weights, mat_multscal(dLdW, -lr));
     }
 
     return nn;
 }
-
-// Copy this for debug.
-// printf("~~~~~~ Layer %lld ~~~~~~\n", layer);
-
-// printf("Cur weights:\n");
-// mat_print(cur_weights);
-
-// printf("Prev outputs:\n");
-// mat_print(previous_outputs);
-
-// printf("Cur outputs:\n");
-// mat_print(cur_outputs);
-
-// printf("Gradient:\n");
-// mat_print(gradient);
-
-// printf("Next Deltas:\n");
-// mat_print(next_deltas);
-
-// printf("dw:\n");
-// mat_print(dw);

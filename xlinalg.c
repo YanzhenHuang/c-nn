@@ -133,6 +133,26 @@ Matrix *xmat_hstack(Matrix *mat_l, Matrix *mat_r)
     return hstack;
 }
 
+Matrix *xmat_hrepeat(Matrix *mat, int n)
+{
+    if (n <= 0)
+    {
+        fprintf(stderr, "HRepeat failed: Repeat number should be larger than 0.");
+    }
+    else if (n == 1)
+    {
+        return mat_copy(mat);
+    }
+
+    Matrix *hrepeat = mat_copy(mat);
+    for (int i = 0; i < n; i++)
+    {
+        hrepeat = xmat_hstack(hrepeat, mat);
+    }
+
+    return hrepeat;
+}
+
 Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d)
 {
     if (mat_u->col != mat_d->col)
@@ -142,7 +162,7 @@ Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d)
         exit(1);
     }
 
-    Matrix *hstack = xmat_diag(mat_u->row + mat_u->row, mat_u->col, 0.0);
+    Matrix *vstack = xmat_diag(mat_u->row + mat_u->row, mat_u->col, 0.0);
 
     // Copy mat_u
     for (long long i = 0; i < mat_u->row; i++)
@@ -150,7 +170,7 @@ Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d)
         for (long long j = 0; j < mat_u->col; j++)
         {
             double this_val = mat_read(mat_u, i, j);
-            mat_write(hstack, i, j, this_val);
+            mat_write(vstack, i, j, this_val);
         }
     }
 
@@ -160,11 +180,31 @@ Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d)
         for (long long j = 0; j < mat_d->col; j++)
         {
             double this_val = mat_read(mat_d, i, j);
-            mat_write(hstack, i + mat_u->row, j, this_val);
+            mat_write(vstack, i + mat_u->row, j, this_val);
         }
     }
 
-    return hstack;
+    return vstack;
+}
+
+Matrix *xmat_vrepeat(Matrix *mat, int n)
+{
+    if (n <= 0)
+    {
+        fprintf(stderr, "HRepeat failed: Repeat number should be larger than 0.");
+    }
+    else if (n == 1)
+    {
+        return mat_copy(mat);
+    }
+
+    Matrix *vrepeat = mat_copy(mat);
+    for (int i = 0; i < n; i++)
+    {
+        vrepeat = xmat_vstack(vrepeat, mat);
+    }
+
+    return vrepeat;
 }
 
 double xmat_det(Matrix *mat)

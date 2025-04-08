@@ -69,7 +69,7 @@ Matrix *xmat_rand(long long row, long long col);
 Matrix *xmat_submat(Matrix *mat, long long i_st, long long i_ed, long long j_st, long long j_ed);
 
 /**
- * @brief Stack two matrices horizontally.
+ * @brief Stack a left and right matrix horizontally.
  *
  * @param mat_l Left matrix struct pointer.
  * @param mat_r Right matrix struct pointer.
@@ -78,13 +78,32 @@ Matrix *xmat_submat(Matrix *mat, long long i_st, long long i_ed, long long j_st,
 Matrix *xmat_hstack(Matrix *mat_l, Matrix *mat_r);
 
 /**
- * @brief Stack two matrices vertically.
+ * @brief Horizontally repeat a matrix.
+ *
+ * @param mat
+ * @param n
+ * @return Matrix*
+ */
+Matrix *xmat_hrepeat(Matrix *mat, int n);
+
+/**
+ * @brief Stack an up and down matrix vertically.
  *
  * @param mat_u Up matrix struct pointer.
  * @param mat_d Down matrix struct pointer.
  * @return Matrix*
  */
 Matrix *xmat_vstack(Matrix *mat_u, Matrix *mat_d);
+
+/**
+ * @brief Vertically repeate a matrix.
+ *
+ * @param mat
+ * @param n
+ * @return Matrix*
+ */
+
+Matrix *xmat_vrepeat(Matrix *mat, int n);
 
 /**
  * @brief Calculate the determinant of a matrix.

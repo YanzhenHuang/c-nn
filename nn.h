@@ -94,8 +94,9 @@ Matrix *nn_forward(NN *nn, double *input, long long input_size);
  * @param nn Neural network struct pointer.
  * @param target Desired output.
  * @param forward_output Output of the forward propagation.
+ * @param lr Learning rate.
  * @return Matrix*
  */
-NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output);
+NN *nn_backward(NN *nn, Matrix *target, Matrix *forward_output, double lr);
 
 #endif
