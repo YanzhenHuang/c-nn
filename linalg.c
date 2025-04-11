@@ -83,12 +83,9 @@ double mat_elemSum(Matrix *matrix)
         exit(1);
     }
     double sum = 0;
-    for (long long i = 0; i < matrix->row; i++)
+    for (long long i = 0; i < matrix->row * matrix->col; i++)
     {
-        for (long long j = 0; j < matrix->col; j++)
-        {
-            sum += mat_read(matrix, i, j);
-        }
+        sum += matrix->data[i];
     }
 
     return sum;
@@ -125,15 +122,15 @@ Matrix *mat_addscal(Matrix *mat, double val)
         fprintf(stderr, "Matrix Add Scalar Failed: Malicious matrix size.");
         exit(1);
     }
-    double *empty_data = malloc(mat->row * mat->col * sizeof(double));
-    Matrix *added = mat_create(mat->row, mat->col, empty_data);
-    for (long long i = 0; i < mat->row; i++)
+    double *added_data = malloc(mat->row * mat->col * sizeof(double));
+
+    for (long long i = 0; i < mat->row * mat->col; i++)
     {
-        for (long long j = 0; j < mat->col; j++)
-        {
-            mat_write(added, i, j, mat_read(mat, i, j) + val);
-        }
+        added_data[i] = mat->data[i] + val;
     }
+
+    Matrix *added = mat_create(mat->row, mat->col, added_data);
+
     return added;
 }
 
@@ -144,15 +141,14 @@ Matrix *mat_multscal(Matrix *mat, double val)
         fprintf(stderr, "Matrix Multiply Scalar Failed: Malicious matrix size.");
         exit(1);
     }
-    double *empty_data = malloc(mat->row * mat->col * sizeof(double));
-    Matrix *multiplied = mat_create(mat->row, mat->col, empty_data);
-    for (long long i = 0; i < mat->row; i++)
+    double *multiplied_data = malloc(mat->row * mat->col * sizeof(double));
+
+    for (long long i = 0; i < mat->row * mat->col; i++)
     {
-        for (long long j = 0; j < mat->col; j++)
-        {
-            mat_write(multiplied, i, j, mat_read(mat, i, j) * val);
-        }
+        multiplied_data[i] = mat->data[i] * val;
     }
+
+    Matrix *multiplied = mat_create(mat->row, mat->col, multiplied_data);
     return multiplied;
 }
 
@@ -173,16 +169,14 @@ Matrix *mat_addmat(Matrix *mat_1, Matrix *mat_2)
                 mat_1->row, mat_1->col, mat_2->row, mat_2->col);
     }
 
-    double *empty_data = malloc(mat_1->row * mat_1->col * sizeof(double));
-    Matrix *added = mat_create(mat_1->row, mat_1->col, empty_data);
-    for (long long i = 0; i < added->row; i++)
+    double *added_data = malloc(mat_1->row * mat_1->col * sizeof(double));
+
+    for (long long i = 0; i < mat_1->row * mat_1->col; i++)
     {
-        for (long long j = 0; j < added->col; j++)
-        {
-            double added_val = mat_read(mat_1, i, j) + mat_read(mat_2, i, j);
-            mat_write(added, i, j, added_val);
-        }
+        added_data[i] = mat_1->data[i] + mat_2->data[i];
     }
+
+    Matrix *added = mat_create(mat_1->row, mat_1->col, added_data);
 
     return added;
 }
@@ -210,18 +204,16 @@ Matrix *mat_pwpmat(Matrix *mat_1, Matrix *mat_2)
         exit(1);
     }
 
-    double *empty_data = malloc(mat_1->row * mat_1->col * sizeof(double));
-    Matrix *produced = mat_create(mat_1->row, mat_2->col, empty_data);
+    double *multiplied_data = malloc(mat_1->row * mat_1->col * sizeof(double));
 
-    for (long long i = 0; i < mat_1->row; i++)
+    for (long long i = 0; i < mat_1->row * mat_1->col; i++)
     {
-        for (long long j = 0; j < mat_1->col; j++)
-        {
-            double product = mat_read(mat_1, i, j) * mat_read(mat_2, i, j);
-            mat_write(produced, i, j, product);
-        }
+        multiplied_data[i] = mat_1->data[i] * mat_2->data[i];
     }
-    return produced;
+
+    Matrix *added = mat_create(mat_1->row, mat_1->col, multiplied_data);
+
+    return added;
 }
 
 Matrix *mat_multmat(Matrix *mat_l, Matrix *mat_r)

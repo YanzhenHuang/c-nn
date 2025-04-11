@@ -58,6 +58,8 @@ int demo_xlinalg()
     printf("Matrix C (%lld x %lld):\n", C->row, C->col);
     mat_print(C);
 
+    printf("Element Sum of Matrix C: %llf\n", mat_elemSum(C));
+
     double detC = xmat_det(C);
     printf("Calculated Determinant: %f\n", detC);
     printf("Matrix acquired from: https://www.youtube.com/watch?v=crCsJy1lKXI\n\n");
