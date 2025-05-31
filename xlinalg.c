@@ -60,6 +60,13 @@ Matrix *xmat_diag(long long row, long long col, double val)
     return xmat_traverse(diag_mat, _set_diagonal, val);
 }
 
+Matrix *xmat_zeros(long long row, long long col)
+{
+    double *empty_data = calloc(row * col, sizeof(double));
+    Matrix *zeros = mat_create(row, col, empty_data);
+    return zeros;
+}
+
 Matrix *xmat_identity(long long size)
 {
     return xmat_diag(size, size, 1.0);
@@ -477,12 +484,12 @@ bool xmat_isZero(Matrix *mat)
     return true;
 }
 
-long long xmat_mean(Matrix *mat)
+double xmat_mean(Matrix *mat)
 {
     return mat_elemSum(mat) / (mat->row * mat->col);
 }
 
-long long xmat_std(Matrix *mat)
+double xmat_std(Matrix *mat)
 {
     long long mean = xmat_mean(mat);
     long long _std = 0;
@@ -491,6 +498,81 @@ long long xmat_std(Matrix *mat)
         _std += pow(mat->data[i] - mean, 2);
     }
     return _std / (mat->row * mat->col);
+}
+
+double xmat_dist(Matrix *mat1, Matrix *mat2, int l)
+{
+    if (mat1->row != mat2->row || mat1->col != mat2->col)
+    {
+        fprintf(stderr, "Calculate distance failed. Matrices are not equal size.");
+        exit(1);
+    }
+    switch (l)
+    {
+    case 0:
+        // l0-distance: Num. of non-equal elements.
+        long long l0 = 0;
+        for (long long i = 0; i < mat1->row * mat1->col; i++)
+        {
+            if (mat1->data[i] != mat2->data[i])
+            {
+                l0++;
+            }
+        }
+        return l0;
+    case 1:
+        // l1-distance: Sum of absolute differences.
+        long long l1 = 0;
+        for (long long i = 0; i < mat1->row * mat1->col; i++)
+        {
+            l1 += abs(mat1->data[i] - mat2->data[i]);
+        }
+    case 2:
+        // l2-distance: Sum of rooted-squared differences.
+        long long _l2 = 0;
+        for (long long i = 0; i < mat1->row * mat1->col; i++)
+        {
+            _l2 += pow(mat1->data[i] - mat2->data[i], 2);
+        }
+        return sqrt(_l2);
+    case -1:
+        // Chebyshev's distance: Maximum of absolute differences.
+        long long linf = 0;
+        for (long long i = 0; i < mat1->row * mat1->col; i++)
+        {
+            linf = max(linf, abs(mat1->data[i] - mat2->data[i]));
+        }
+    default:
+        fprintf(stderr, "Input error: Invalid distance. l should only be 0, 1, 2, or -1.");
+        exit(1);
+    }
+}
+
+double xmat_norm(Matrix *mat, long long l)
+{
+    Matrix *zero = xmat_zeros(mat->row, mat->col);
+    return xmat_dist(mat, zero, l);
+}
+
+double xmat_cossim(Matrix *mat1, Matrix *mat2)
+{
+    if (mat1->row != mat2->row || mat1->col != mat2->col)
+    {
+        fprintf(stderr, "Calculate cosine-similarity failed. Matrices are not equal size.");
+        exit(1);
+    }
+    
+    double mul = 1;
+    for (long long i = 0; i < mat1->row * mat1->col; i++){
+         mul *= mat1->data[i] * mat2->data[i];
+    }
+
+    double mat1_l1 = xmat_norm(mat1, 1);
+    double mat2_l1 = xmat_norm(mat2, 1);
+
+    long long i = 1;
+    double eps = *(double *)&i;     // long long i=1 -> 00 00 ... 00 01
+    return mul / (mat1_l1 * mat2_l1 + eps);
 }
 
 // long long xmat_svd(Matrix *A)

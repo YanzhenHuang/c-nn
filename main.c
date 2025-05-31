@@ -113,6 +113,8 @@ int demo_xlinalg()
     bool allZero = xmat_isZero(AllZero);
     printf("Identify as: %d\n\n", allZero);
 
+    
+
     return 0;
 }
 

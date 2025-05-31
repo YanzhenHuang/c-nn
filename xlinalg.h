@@ -48,6 +48,15 @@ Matrix *xmat_traverse(Matrix *mat, MatrixElementOperation operation, ...);
 Matrix *xmat_diag(long long row, long long col, double val);
 
 /**
+ * @brief Generate an all-zero matrix of a given size.
+ * 
+ * @param row Matrix height, number of rows.
+ * @param col Matrix width, number of columns.
+ * @return Matrix* 
+ */
+Matrix *xmat_zeros(long long row, long long col);
+
+/**
  * @brief Generate a square identity matrix of a given size.
  * 
  * @param size The size of the identity square matrix.
@@ -219,7 +228,7 @@ bool xmat_isZero(Matrix *mat);
  * @param mat Matrix struct pointer.
  * @return long long
  */
-long long xmat_mean(Matrix *mat);
+double xmat_mean(Matrix *mat);
 
 /**
  * @brief Element standard deviation of a matrix.
@@ -227,6 +236,34 @@ long long xmat_mean(Matrix *mat);
  * @param mat Matrix struct pointer.
  * @return long long 
  */
-long long xmat_std(Matrix *mat);
+double xmat_std(Matrix *mat);
+
+/**
+ * @brief Calculate the l-distances of two matrices with the same size.
+ * 
+ * @param mat1 Matrix struct pointer of the first matrix.
+ * @param mat2 Matrix struct pointer of the second matrix.
+ * @param l Distance norm.
+ * @return long long 
+ */
+double xmat_dist(Matrix *mat1, Matrix *mat2, int l);
+
+/**
+ * @brief Calculate the l-norm of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @param l Norm.
+ * @return long long 
+ */
+double xmat_norm(Matrix *mat, long long l);
+
+/**
+ * @brief Calculate the cosine similarity of the two matrices.
+ * 
+ * @param mat_1 Matrix struct pointer of the first matrix.
+ * @param mat_2 Matrix struct pointer of the second matrix.
+ * @return double 
+ */
+double xmat_cossim(Matrix *mat_1, Matrix *mat_2);
 
 #endif
