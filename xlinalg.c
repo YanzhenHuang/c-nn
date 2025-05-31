@@ -459,3 +459,24 @@ bool xmat_isOrth(Matrix *mat)
 
     return xmat_isEqual(mat_multmat(mat, mat_T), eye);
 }
+
+bool xmat_isZero(Matrix *mat)
+{
+    return (long long)mat->data == 0;
+}
+
+long long xmat_mean(Matrix *mat)
+{
+    return mat_elemSum(mat) / (mat->row * mat->col);
+}
+
+long long xmat_std(Matrix *mat)
+{
+    long long mean = xmat_mean(mat);
+    long long _std = 0;
+    for (long long i = 0; i < mat->row * mat->col; i++)
+    {
+        _std += pow(mat->data[i] - mean, 2);
+    }
+    return _std / (mat->row * mat->col);
+}

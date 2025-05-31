@@ -197,4 +197,28 @@ bool xmat_isSymm(Matrix *mat);
  */
 bool xmat_isOrth(Matrix *mat);
 
+/**
+ * @brief Identify if a matrix is all 0;
+ * 
+ * @param mat Matrix struct pointer.
+ * @return bool
+ */
+bool xmat_isZero(Matrix *mat);
+
+/**
+ * @brief Element mean of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return long long
+ */
+long long xmat_mean(Matrix *mat);
+
+/**
+ * @brief Element standard deviation of a matrix.
+ * 
+ * @param mat Matrix struct pointer.
+ * @return long long 
+ */
+long long xmat_std(Matrix *mat);
+
 #endif
