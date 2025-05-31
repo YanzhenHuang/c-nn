@@ -48,6 +48,14 @@ Matrix *xmat_traverse(Matrix *mat, MatrixElementOperation operation, ...);
 Matrix *xmat_diag(long long row, long long col, double val);
 
 /**
+ * @brief Generate a square identity matrix of a given size.
+ * 
+ * @param size The size of the identity square matrix.
+ * @return Matrix* 
+ */
+Matrix *xmat_identity(long long size);
+
+/**
  * @brief Generate a random matrix.
  *
  * @param row Matrix height, number of rows.

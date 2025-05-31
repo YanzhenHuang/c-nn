@@ -60,6 +60,11 @@ Matrix *xmat_diag(long long row, long long col, double val)
     return xmat_traverse(diag_mat, _set_diagonal, val);
 }
 
+Matrix *xmat_identity(long long size)
+{
+    return xmat_diag(size, size, 1.0);
+}
+
 Matrix *xmat_rand(long long row, long long col)
 {
     srand((unsigned int)time(NULL));
@@ -415,7 +420,7 @@ Matrix *xmat_inv(Matrix *mat)
         exit(1);
     }
 
-    Matrix *identity = xmat_diag(mat->row, mat->col, 1);
+    Matrix *identity = xmat_identity(mat->row);
     return xmat_solve(mat, identity);
 }
 
