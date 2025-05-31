@@ -462,7 +462,14 @@ bool xmat_isOrth(Matrix *mat)
 
 bool xmat_isZero(Matrix *mat)
 {
-    return (long long)mat->data == 0;
+    for (long long i = 0; i < mat->row * mat->col; i++)
+    {
+        if (mat->data[i] != 0)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 long long xmat_mean(Matrix *mat)
@@ -480,3 +487,15 @@ long long xmat_std(Matrix *mat)
     }
     return _std / (mat->row * mat->col);
 }
+
+// long long xmat_svd(Matrix *A)
+// {
+//     Matrix *AT = mat_transpose(A);
+
+//     // V * ST * S * VT
+//     Matrix *AT_A = mat_multmat(AT, A);
+
+//     // U * S * ST * U
+//     Matrix *A_AT = mat_multmat(A, AT);
+
+// }

@@ -163,7 +163,7 @@ Matrix *mat_addmat(Matrix *mat_1, Matrix *mat_2)
     if (mat_1->row != mat_2->row || mat_1->col != mat_2->col)
     {
         fprintf(stderr,
-                "Matrix Add Matrix Failed:",
+                "Matrix Add Matrix Failed:"
                 "Cannot add matrix with different size.\n"
                 "mat_1 have size %lld x %lld while mat_2 have size %lld x %lld.",
                 mat_1->row, mat_1->col, mat_2->row, mat_2->col);
